@@ -18,7 +18,7 @@ var nodemailer = require('nodemailer');
 var fileupload = require("express-fileupload");
 var Csv = require('csvtojson');
 var Xlsx = require('xlsx');
-
+const cors = require('cors');
 
 
 
@@ -53,7 +53,12 @@ RAR.App.use(bodyParser.urlencoded({ extended: false }))
 RAR.App.use(bodyParser.json())
 RAR.App.use(fileupload())
 RAR.App.use(express.static(path.resolve('./public')));
-
+RAR.App.use(cors({
+    origin: 'http://192.168.252.29:5000', // Replace with the URL of your frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // If you need to allow cookies or other credentials
+  }));
+  
 
 const port = process.env.PORT || 3000
 let date = new Date();

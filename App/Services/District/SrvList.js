@@ -3,28 +3,55 @@ const { object } = require('joi');
 const RAR = require('../../../common/Foundation');
 module.exports = {
 
-    getDistrictList: async function () {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('District').find().lean()
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Getting District list succesfully"
+   
+    getDistrictList : async function (stateName) {
+    try {
+        const districts = await RAR.Mongoose.model('District').aggregate([
+            {
+                $lookup: {
+                    from: 'State', // The name of the State collection
+                    localField: 'state',
+                    foreignField: '_id',
+                    as: 'stateDetails'
                 }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All District List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while District list"
-
-                };
-                resolve(obj);
-
+            },
+            {
+                $unwind: '$stateDetails'
+            },
+            {
+                $match: {
+                    'stateDetails.name': stateName
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    // Add other fields you want to include in the result
+                }
             }
-        })
-    },
+        ]);
+
+        if (districts.length === 0) {
+            return {
+                statusCode: 404,
+                message: "Districts not found for the given state name"
+            };
+        }
+
+        return {
+            statusCode: 200,
+            result: districts,
+            message: "District list retrieved successfully"
+        };
+    } catch (error) {
+        console.error("Error retrieving districts list: ", error.message);
+        return {
+            statusCode: 400,
+            message: "Error while retrieving district list"
+        };
+    }
+        },
 
     getDistrictByName: async function (data) {
         return new Promise(async function (resolve, reject) {

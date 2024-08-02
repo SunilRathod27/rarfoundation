@@ -3,21 +3,21 @@ const { object } = require('joi');
 const RAR = require('../../../common/Foundation');
 module.exports = {
 
-    getCityList: async function () {
+    getSlidesList: async function () {
         return new Promise(async function (resolve, reject) {
             try {
-                let List = await RAR.Mongoose.model('City').find().lean()
+                let List = await RAR.Mongoose.model('Slides').find().lean()
                 let result = {
                     statusCode: 200,
                     result: List,
-                    message: "Getting City list succesfully"
+                    message: "Getting Slides list succesfully"
                 }
                 resolve(result);
             } catch (error) {
-                console.log("Error In Get All City List!! " + error.message);
+                console.log("Error In Get All Slides List!! " + error.message);
                 let obj = {
                     statusCode: 400,
-                    message: "Error while City list"
+                    message: "Error while Slides list"
 
                 };
                 resolve(obj);
@@ -26,21 +26,21 @@ module.exports = {
         })
     },
 
-    getCityByName: async function (data) {
+    getSlidesByName: async function (data) {
         return new Promise(async function (resolve, reject) {
             try {
-                let List = await RAR.Mongoose.model('City').find({ "name": data }).lean();
+                let List = await RAR.Mongoose.model('Slides').find({ "name": data }).lean();
                 let result = {
                     statusCode: 200,
                     result: List,
-                    message: "Get single City successfully"
+                    message: "Get single Slides successfully"
                 }
                 resolve(result);
             } catch (error) {
-                console.log("Error In Get All City Name List!! " + error.message);
+                console.log("Error In Get All Slides Name List!! " + error.message);
                 let obj = {
                     statusCode: 400,
-                    message: "Error while get the single City record"
+                    message: "Error while get the single Slides record"
 
                 };
                 resolve(obj);
@@ -48,21 +48,21 @@ module.exports = {
             }
         })
     },
-    addCity: async function (data) {
+    addSlides: async function (data) {
         return new Promise(async function (resolve, reject) {
             try {
-                let addCity = await RAR.Mongoose.model('City').create(data);
+                let addSlides = await RAR.Mongoose.model('Slides').create(data);
                 let result = {
                     statusCode: 200,
                     result: null,
-                    message: "New City added sucessfully",
+                    message: "New Slides added sucessfully",
                 }
                 resolve(result);
             } catch (error) {
-                console.log(" Error In Add New City!! " + error.message);
+                console.log(" Error In Add New Slides!! " + error.message);
                 let obj = {
                     statusCode: 400,
-                    message: "Error while add new City",
+                    message: "Error while add new Slides",
                     result: null
                 };
                 resolve(obj);
@@ -71,23 +71,23 @@ module.exports = {
 
         })
     },
-    editCity: async function (id, data) {
+    editSlides: async function (id, data) {
         return new Promise(async function (resolve, reject) {
             try {
 
-                let editCity = await RAR.Mongoose.model('City').findByIdAndUpdate({ '_id': id }, data);
-                if (editCity) {
+                let editSlides = await RAR.Mongoose.model('Slides').findByIdAndUpdate({ '_id': id }, data);
+                if (editSlides) {
                     let result = {
                         statusCode: 200,
                         result: null,
-                        message: 'City upadated successfully',
+                        message: 'Slides upadated successfully',
                     }
 
                     resolve(result);
                 } else {
                     let result = {
                         statusCode: 400,
-                        message: "Error while update the City",
+                        message: "Error while update the Slides",
                     }
 
                     resolve(result);
@@ -95,10 +95,10 @@ module.exports = {
 
 
             } catch (error) {
-                console.log("Error In Update City!! " + error.message);
+                console.log("Error In Update Slides!! " + error.message);
                 let obj = {
                     statusCode: 400,
-                    message: 'Error while update the City',
+                    message: 'Error while update the Slides',
                     result: null
                 };
                 resolve(obj);
@@ -113,21 +113,21 @@ module.exports = {
 
         })
     },
-    getSingleCity: async function (data) {
+    getSingleSlides: async function (data) {
         return new Promise(async function (resolve, reject) {
             try {
-                let List = await RAR.Mongoose.model('City').findById(data);
+                let List = await RAR.Mongoose.model('Slides').findById(data);
                 let result = {
                     statusCode: 200,
                     result: List,
-                    message: "Single City "
+                    message: "Single Slides "
                 }
                 resolve(result);
             } catch (error) {
-                console.log("Error In Get Single City !! " + error.message);
+                console.log("Error In Get Single Slides !! " + error.message);
                 let obj = {
                     statusCode: 400,
-                    message: "Error While Single City "
+                    message: "Error While Single Slides "
 
                 };
                 resolve(obj);
@@ -136,22 +136,22 @@ module.exports = {
         })
     },
 
-    deleteCity: async function () {
+    deleteSlides: async function () {
         return new Promise(async function (resolve, reject) {
 
             try {
 
-                let deleteCity = await RAR.Mongoose.model('City').deleteOne();
+                let deleteSlides = await RAR.Mongoose.model('Slides').deleteOne();
 
                 let result = {
                     statusCode: 200,
                     result: null,
-                    message: "City Deleted",
+                    message: "Slides Deleted",
                 }
                 resolve(result);
 
             } catch (error) {
-                console.log("Error while Delete City " + error.message);
+                console.log("Error while Delete Slides " + error.message);
                 let obj = {
                     statusCode: 400,
                     message: 111,

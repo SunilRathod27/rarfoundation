@@ -6,17 +6,16 @@ module.exports = {
 
 
 
-    getDistrictList: async function (req, res) {
+    getSlidesList: async function (req, res) {
         try {
-            const { state } = req.query;
-            let List = await RAR.App.Services.District.SrvList.getDistrictList(state);
+            let List = await RAR.App.Services.Slides.SrvList.getSlidesList();
             if (List.statusCode == 200) {
                 let resObj = {
                     result: List.result
                 }
                 let obj = {
                     statusCode: 200,
-                    message: "Getting District list successfully",
+                    message: "Getting Slides list successfully",
                     result: resObj
                 };
                 res.send(obj);
@@ -24,30 +23,30 @@ module.exports = {
             } else {
                 let obj = {
                     statusCode: 400,
-                    message: "Error while get District  list !",
+                    message: "Error while get Slides  list !",
                     result: List.message
                 };
 
                 res.send(obj);
             }
         } catch (error) {
-            console.log(" Error while get District  list " + error.message);
+            console.log(" Error while get Slides  list " + error.message);
             let obj = {
                 statusCode: 400,
-                message: " Error while get District  list ",
+                message: " Error while get Slides  list ",
                 result: null
             };
             res.send(obj);
         }
     },
-    addDistrict: async function (req, res) {
+    addSlides: async function (req, res) {
         try {
-            let addDistrict = await RAR.App.Services.District.SrvList.addDistrict(req.body);
-            res.send(addDistrict);
+            let addSlides = await RAR.App.Services.Slides.SrvList.addSlides(req.body);
+            res.send(addSlides);
         } catch (error) {
             let obj = {
                 statusCode: 400,
-                message: "Erro while add new District",
+                message: "Erro while add new Slides",
                 result: null
             };
             res.send(obj);
@@ -56,17 +55,17 @@ module.exports = {
 
 
 
-    editDistrict: async function (req, res) {
+    editSlides: async function (req, res) {
         try {
-            let editDistrict = await RAR.App.Services.District.SrvList.editDistrict(req.params.id, req.body);
+            let editSlides = await RAR.App.Services.Slides.SrvList.editSlides(req.params.id, req.body);
 
-            res.send(editDistrict);
+            res.send(editSlides);
         } catch (error) {
-            console.log("Error While Update District Con!! " + error.message);
+            console.log("Error While Update Slides Con!! " + error.message);
             let obj = {
                 statusCode: 400,
 
-                message: "Error While Update District",
+                message: "Error While Update Slides",
                 result: null
             };
             res.send(obj);
@@ -74,17 +73,17 @@ module.exports = {
 
     },
 
-    deleteDistrict: async function (req, res) {
+    deleteSlides: async function (req, res) {
         try {
-            let deleteDistrict = await RAR.App.Services.District.SrvList.deleteDistrict(req.params.id, req.body);
+            let deleteSlides = await RAR.App.Services.Slides.SrvList.deleteSlides(req.params.id, req.body);
 
-            res.send(deleteDistrict);
+            res.send(deleteSlides);
         } catch (error) {
-            console.log("Error While Delete District Con!! " + error.message);
+            console.log("Error While Delete Slides Con!! " + error.message);
             let obj = {
                 statusCode: 400,
 
-                message: "Error While Delete District",
+                message: "Error While Delete Slides",
                 result: null
             };
             res.send(obj);
