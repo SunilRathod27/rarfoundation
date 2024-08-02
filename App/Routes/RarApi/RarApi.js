@@ -1,7 +1,8 @@
 'use strict';
 const RAR = require('../../../common/Foundation');
+// const path = require('path');
+// const csv = require('csv-parse');
 const path = require('path');
-const csv = require('csv-parse');
 
 try {
     
@@ -51,7 +52,8 @@ try {
         //   ];
         //  let data= await RAR.Mongoose.model('District').insertMany(districtData)
         //  console.log('data',data);
-        res.send('Welcome to RAR Foundation. We are dedicated to making a positive impact through our initiatives.')
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        // res.send('Welcome to RAR Foundation. We are dedicated to making a positive impact through our initiatives.')
     });
     // const multer = require('multer');
     // const upload = multer({ dest: 'uploads/' });
