@@ -2,9 +2,43 @@
 const RAR = require('../../../common/Foundation');
 module.exports = {
 
+    submitForm: async function (req, res) {
+        try {
+          // Call the service layer to handle the form submission
+          const result = await RAR.App.Services.User.SrvList.submitForm(req.body);
+    
+          // Check if the result indicates success
+          if (result.statusCode === 200) {
+            let obj = {
+              statusCode: 200,
+              message: result.message,
+              result: null,
+              token: null, // If you have a token, add it here
+            };
+            res.send(obj);
+          } else {
+            let obj = {
+              statusCode: 400,
+              message: result.message,
+              result: null
+            };
+            res.send(obj);
+          }
+          
+        } catch (error) {
+          console.log("Error While Submit Form", error);
+    
+          res.status(400).send({
+            statusCode: 400,
+            message: 'ફોર્મ સબમિટ કરવામાં ભૂલ આવી. કૃપા કરીને ફરીથી પ્રયત્ન કરો.',
+            result: null
+          });
+        }
+      },
+
     login: async function (req, res) {
         try {
-            let getUserDetails = await RAR.App.Services.user.SrvList.getUserByEmail(req.body.email);
+            let getUserDetails = await RAR.App.Services.User.SrvList.getUserByEmail(req.body.email);
 
             if (getUserDetails.result.length > 0) {
 
@@ -59,7 +93,7 @@ module.exports = {
 
     createUser: async function (req, res) {
         try {
-            let data = await RAR.App.Services.user.SrvList.createUser(req.body);
+            let data = await RAR.App.Services.User.SrvList.createUser(req.body);
             RAR.Jwt.sign({ userId: data.userID, isAdmin: data.isAdmin }, process.env.TOKEN_SECRET, { expiresIn: '1d' }, (err, tokenval) => {
                 if (!err) {
                     res.send({
@@ -92,7 +126,7 @@ module.exports = {
 
     profile: async function (req, res) {
         try {
-            let data = await RAR.App.Services.user.SrvList.profile(req.body);
+            let data = await RAR.App.Services.User.SrvList.profile(req.body);
 
             if (data.statusCode == 200) {
                 res.send({
@@ -117,7 +151,7 @@ module.exports = {
     },
     password: async function (req, res) {
         try {
-            let data = await RAR.App.Services.user.SrvList.password(req.body);
+            let data = await RAR.App.Services.User.SrvList.password(req.body);
             if (data.statusCode === 200) {
                 res.send({
                     statusCode: 200,
@@ -140,7 +174,7 @@ module.exports = {
     },
     changeAddress: async function (req, res) {
         try {
-            let data = await RAR.App.Services.user.SrvList.changeAddress(req);
+            let data = await RAR.App.Services.User.SrvList.changeAddress(req);
             if (data.statusCode == 200) {
                 res.send({
                     statusCode: 200,
@@ -163,7 +197,7 @@ module.exports = {
     },
     addnewaddress: async function (req, res) {
         try {
-            let data = await RAR.App.Services.user.SrvList.addnewaddress(req.body);
+            let data = await RAR.App.Services.User.SrvList.addnewaddress(req.body);
             if (data.statusCode == 200) {
                 res.send({
                     statusCode: 200,
@@ -192,9 +226,9 @@ module.exports = {
     forgotPassword: async function (req, res) {
         try {
             if (process.env.EMAIL_TEST && process.env.EMAIL_TEST_APP_PSWD) {
-                let user = await RAR.App.Services.user.SrvList.getUserByID(req.body.email);
-                if (user.result != null && user.result != '' && user.result != undefined) {
-                    let userID = user.result._id
+                let User = await RAR.App.Services.User.SrvList.getUserByID(req.body.email);
+                if (User.result != null && User.result != '' && User.result != undefined) {
+                    let userID = User.result._id
                     const token = RAR.Jwt.sign({ userId: userID }, process.env.TOKEN_SECRET, { expiresIn: '1h' })
                     let transporter = RAR.Mailer.createTransport({
                         host: 'smtp.gmail.com',
@@ -205,7 +239,7 @@ module.exports = {
                             ciphers: "SSLv3",
                         },
                         auth: {
-                            user: process.env.EMAIL_TEST,
+                            User: process.env.EMAIL_TEST,
                             pass: process.env.EMAIL_TEST_APP_PSWD
                         },
                         from: process.env.EMAIL_TEST

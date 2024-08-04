@@ -5,15 +5,27 @@ RAR.User = {
     serialNumber: {
         type: String,
         unique: true,
-        required: true,
+        default:''
       },
       name: {
+        type: String,
+        required: true,
+      },
+      fathername: {
         type: String,
         required: true,
       },
       surname: {
         type: String,
         required: true,
+      },
+      email: {
+        type: String,
+        unique: true, 
+        required: true, 
+        trim: true, 
+        lowercase: true, 
+        match: [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Please fill a valid email address.']
       },
       birthday: {
         type: Date,
@@ -33,17 +45,12 @@ RAR.User = {
         ref: 'District',
         required: true,
       },
-      city: {
-        type: RAR.Mongoose.Schema.Types.ObjectId,
-        ref: 'City',
-        required: true,
-      },
       whatsapp: {
-        type: String,
+        type: Buffer,
         required: true,
       },
       idProof: {
-        type: String,
+        type: Buffer,
         required: true,
       },
       photo: {
@@ -57,6 +64,12 @@ RAR.User = {
       },
       designation: {
         type: String,
+        required: true,
+      },
+      status: {
+        type: String,
+        enum: ['active', 'inactive'], 
+        default: 'inactive',
         required: true,
       },
     createdAt: { type: Date, default: Date.now },

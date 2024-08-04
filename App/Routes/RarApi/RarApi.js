@@ -52,7 +52,7 @@ try {
         //   ];
         //  let data= await RAR.Mongoose.model('District').insertMany(districtData)
         //  console.log('data',data);
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        // res.sendFile(path.join(__dirname, 'public', 'index.html'));
         // const causes = [
         //     {
         //         title: "",
@@ -97,7 +97,7 @@ try {
         // { image: 'images/24.jpg', title: '', subtitle: '', content: '' },
         // ]
         // await RAR.Mongoose.model('Slides').insertMany(slide)
-        // res.send('Welcome to RAR Foundation. We are dedicated to making a positive impact through our initiatives.')
+        res.send('Welcome to RAR Foundation. We are dedicated to making a positive impact through our initiatives.')
     });
     // const multer = require('multer');
     // const upload = multer({ dest: 'uploads/' });
