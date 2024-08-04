@@ -47,7 +47,7 @@ RAR.App.use(fileupload());
 RAR.App.use(express.static('./build'));
 RAR.App.use(express.static(path.resolve('./public')));
 RAR.App.use(cors({
-    origin: 'http://192.168.252.29:5000', // Replace with the URL of your frontend
+    origin: 'http://82.112.234.166:9090', // Replace with the URL of your frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // If you need to allow cookies or other credentials
 }));
