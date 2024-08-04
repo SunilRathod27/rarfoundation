@@ -47,11 +47,17 @@ RAR.App.use(fileupload());
 RAR.App.use(express.static('./build'));
 RAR.App.use(express.static(path.resolve('./public')));
 RAR.App.use(cors({
-    origin: 'http://82.112.234.166:9090', // Replace with the URL of your frontend
+    origin: '*', // Replace with the URL of your frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // If you need to allow cookies or other credentials
 }));
 
+// RAR.App.ExpServer.use(function (req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//     next();
+// });
 const port = process.env.PORT || 3000;
 let date = new Date();
 let dateTime = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' Time ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
@@ -98,6 +104,8 @@ try {
     } else {
         dbURI = `mongodb+srv://${process.env.RAR_MONGODB_USER}:${process.env.RAR_MONGODB_PASSWORD}@${process.env.RAR_MONGODB_HOST}/${process.env.RAR_MONGODB_DATABASE}`;
     }
+
+
     console.log("dbURI", dbURI);
     let opt = {
         autoIndex: false, // Don't build indexes
