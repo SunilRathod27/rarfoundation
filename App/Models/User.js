@@ -2,11 +2,16 @@
 const RAR = require('../../common/Foundation');
 const Schema = RAR.Mongoose.Schema;
 RAR.User = {
-    serialNumber: {
-        type: String,
-        unique: true,
-        default:''
-      },
+    registrationId: {
+      type: String,
+      unique: true,
+      default: '',
+    },
+    activationId: {
+      type: String,
+      unique: true,
+     default:''
+  },
       name: {
         type: String,
         required: true,

@@ -16,11 +16,11 @@ module.exports = {
       const stateId = await this.getObjectIdByName('State', formData.state);
       const districtId = await this.getObjectIdByName('District', formData.district);
       const bloodGroupId = await this.getObjectIdByName('BloodGroup', formData.bloodGroup);
-
+      const activationId = await this.generateUniqueActivationId();
 
       // Create a new user object with the status set to 'inactive'
       const newUser = {
-        serialNumber: '',
+        activationId: activationId,
         name: formData.name,
         fathername: formData.fathername,
         surname: formData.surname,
@@ -34,6 +34,7 @@ module.exports = {
         photo: formData.photoPreview,
         bloodGroup: bloodGroupId,
         designation: formData.designation,
+        registrationId:'',
         status: 'inactive',
       };
 
@@ -45,7 +46,7 @@ module.exports = {
         return {
           userID: createUser._id,
           statusCode: 200,
-          message: 'ફોર્મ સબમિટ થઈ ગયું છે. RAR ફાઉન્ડેશન ટીમ તમને સંપર્ક કરશે.',
+          message: `ફોર્મ સબમિટ થઈ ગયું છે. RAR ફાઉન્ડેશન ટીમ તમને સંપર્ક કરશે.  તમારું સક્રિયકરણ આઈડી છે:${activationId}`,
           result: null
         };
       } else {
@@ -64,7 +65,24 @@ module.exports = {
       };
     }
   },
+  generateUniqueActivationId:async function () {
+    let isUnique = false;
+    let activationId;
   
+    while (!isUnique) {
+      // Generate a 4-digit number
+      activationId = Math.floor(1000 + Math.random() * 9000).toString();
+  
+      // Check if the activation ID already exists in the database
+      const existingUser = await  RAR.Mongoose.model('User').findOne({ activationId });
+  
+      if (!existingUser) {
+        isUnique = true;
+      }
+    }
+  
+    return activationId;
+  },
   getObjectIdByName: async function (modelName, name) {
     try {
       const model = RAR.Mongoose.model(modelName);
