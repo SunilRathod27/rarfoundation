@@ -10,8 +10,7 @@ try {
         RAR.App.Controller.User.ConList.createUser);
 
 
-        RAR.Router.post('/User/Submit-form',
-            RAR.App.Controller.User.ConList.submitForm);
+        RAR.Router.post('/api/User/Submit-form',RAR.App.Controller.User.ConList.submitForm);
 
     // for update User profile    
     RAR.Router.put('/User/profile', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization, RAR.App.Middlewares.User.UserMid.validateUpdatePayload,
