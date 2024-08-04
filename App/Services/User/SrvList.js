@@ -46,7 +46,7 @@ module.exports = {
         return {
           userID: createUser._id,
           statusCode: 200,
-          message: `ફોર્મ સબમિટ થઈ ગયું છે. RAR ફાઉન્ડેશન ટીમ તમને સંપર્ક કરશે.  તમારું સક્રિયકરણ આઈડી છે:${activationId}`,
+          message: `ફોર્મ સબમિટ થઈ ગયું છે. RAR ફાઉન્ડેશન ટીમ તમને સંપર્ક કરશે.  તમારું સક્રિયકરણ આઈડી છે : ${activationId}`,
           result: null
         };
       } else {
