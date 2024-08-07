@@ -4,15 +4,27 @@ const RAR = require('../../../common/Foundation');
 module.exports = {
   submitForm: async function (formData) {
     try {
-      const existingUser = await RAR.Mongoose.model('User').findOne({ email: formData.email });
+      // const existingUser = await RAR.Mongoose.model('User').findOne({ email: formData.email });
 
-      if (existingUser) {
-        return {
-          statusCode: 400,
-          message: 'આઈમેઇલ પહેલાથી જ ઉપયોગમાં છે. કૃપા કરીને અન્ય એક અજમાવવો.',
-          result: null
-        };
-      }
+      // if (existingUser) {
+      //   return {
+      //     statusCode: 400,
+      //     message: 'આઈમેઇલ પહેલાથી જ ઉપયોગમાં છે. કૃપા કરીને અન્ય એક અજમાવવો.',
+      //     result: null
+      //   };
+      // }
+      const checkDuplicates = async (field, value) => {
+        const user = await RAR.Mongoose.model('User').findOne({ [field]: value });
+        if (user) {
+            return `આ ${field} પહેલાથી જ ઉપયોગમાં છે. કૃપા કરીને અન્ય એક અજમાવવો.`;
+        }
+        return null;
+      };
+      const emailMessage = await checkDuplicates('email', formData.email);
+        if (emailMessage) return { statusCode: 400, message: emailMessage, result: null };
+
+      const whatsappMessage = await checkDuplicates('whatsapp', formData.whatsapp);
+      if (whatsappMessage) return { statusCode: 400, message: whatsappMessage, result: null };
       const stateId = await this.getObjectIdByName('State', formData.state);
       const districtId = await this.getObjectIdByName('District', formData.district);
       const bloodGroupId = await this.getObjectIdByName('BloodGroup', formData.bloodGroup);
@@ -46,7 +58,7 @@ module.exports = {
         return {
           userID: createUser._id,
           statusCode: 200,
-          message: `ફોર્મ સબમિટ થઈ ગયું છે. RAR ફાઉન્ડેશન ટીમ તમને સંપર્ક કરશે.  તમારું સક્રિયકરણ આઈડી છે : ${activationId}`,
+          message: `RAR ફાઉન્ડેશન સાથે જોડાવા માટે આપનો આભાર! ફોર્મ સફળતાપૂર્વક સબમિટ કરવામાં આવ્યું છે. RAR ફાઉન્ડેશન ટીમ ટૂંક સમયમાં તમારો સંપર્ક કરશે. તમારું સક્રિયકરણ આઈડી છે: ${activationId}.`,
           result: null
         };
       } else {

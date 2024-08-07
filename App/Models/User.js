@@ -51,7 +51,7 @@ RAR.User = {
         required: true,
       },
       whatsapp: {
-        type: Buffer,
+        type: String,
         required: true,
       },
       idProof: {

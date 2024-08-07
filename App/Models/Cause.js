@@ -4,6 +4,7 @@ const RAR = require('../../common/Foundation');
 const Schema = RAR.Mongoose.Schema;
 RAR.CauseSchema = {
     title: { type: String , default: ''},
+    link: { type: String , default: ''},
     image: { type: String, required: true },
     description: { type: String, required: true },
     date: { type: Date, default: Date.now }
