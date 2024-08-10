@@ -1,12 +1,30 @@
 'use strict';
 const RAR = require('../../common/Foundation');
 
-const Schema = RAR.Mongoose.Schema;
+// Define the Sequelize model for 'Slides'
 RAR.SlidesSchema = {
-  image: { type: String, required: true },
-  title: { type: String, default: '' },
-  subtitle: { type: String,default: '' },
-  content: { type: String, default: '' },
+    image: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false // Equivalent to `required: true` in Mongoose
+    },
+    title: {
+        type: RAR.DataTypes.STRING,
+        defaultValue: '' // Equivalent to `default: ''` in Mongoose
+    },
+    subtitle: {
+        type: RAR.DataTypes.STRING,
+        defaultValue: ''
+    },
+    content: {
+        type: RAR.DataTypes.STRING,
+        defaultValue: ''
+    }
 };
-const SlidesSchema = new Schema(RAR.SlidesSchema, { collection: 'Slides' });
-RAR.Mongoose.model('Slides', SlidesSchema);
+
+// Define the Sequelize model
+RAR.Slides = RAR.Sequelize.define('Slides', RAR.SlidesSchema, {
+    tableName: 'Slides',  // Specifies the table name
+    timestamps: false     // Disables automatic creation of createdAt and updatedAt fields
+});
+
+module.exports = RAR.Slides;

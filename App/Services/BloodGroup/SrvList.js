@@ -1,169 +1,124 @@
 'use strict';
-const { object } = require('joi');
-const RAR = require('../../../common/Foundation');
+
 module.exports = {
 
     getBloodGroupList: async function () {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('BloodGroup').find().lean()
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Getting BloodGroup list succesfully"
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All BloodGroup List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while BloodGroup list"
-
-                };
-                resolve(obj);
-
-            }
-        })
+        try {
+            let list = await RAR.BloodGroup.findAll();
+            return {
+                statusCode: 200,
+                result: list,
+                message: "Getting BloodGroup list successfully"
+            };
+        } catch (error) {
+            console.log("Error In Get All BloodGroup List!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while getting BloodGroup list"
+            };
+        }
     },
 
-    getBloodGroupByName: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('BloodGroup').find({ "name": data }).lean();
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Get single BloodGroup successfully"
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All BloodGroup Name List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while get the single BloodGroup record"
-
-                };
-                resolve(obj);
-
-            }
-        })
+    getBloodGroupByName: async function (name) {
+        try {
+            let list = await RAR.BloodGroup.findAll({ where: { name } });
+            return {
+                statusCode: 200,
+                result: list,
+                message: "Get single BloodGroup successfully"
+            };
+        } catch (error) {
+            console.log("Error In Get BloodGroup By Name!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while getting the single BloodGroup record"
+            };
+        }
     },
+
     addBloodGroup: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let addBloodGroup = await RAR.Mongoose.model('BloodGroup').create(data);
-                let result = {
+        try {
+            let addBloodGroup = await RAR.BloodGroup.create(data);
+            return {
+                statusCode: 200,
+                result: addBloodGroup,
+                message: "New BloodGroup added successfully",
+            };
+        } catch (error) {
+            console.log("Error In Add New BloodGroup!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while adding new BloodGroup",
+                result: null
+            };
+        }
+    },
+
+    editBloodGroup: async function (id, data) {
+        try {
+            let [updated] = await RAR.BloodGroup.update(data, { where: { id } });
+            if (updated) {
+                return {
                     statusCode: 200,
                     result: null,
-                    message: "New BloodGroup added sucessfully",
-                }
-                resolve(result);
-            } catch (error) {
-                console.log(" Error In Add New BloodGroup!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while add new BloodGroup",
-                    result: null
+                    message: 'BloodGroup updated successfully',
                 };
-                resolve(obj);
-
-            }
-
-        })
-    },
-    editBloodGroup: async function (id, data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-
-                let editBloodGroup = await RAR.Mongoose.model('BloodGroup').findByIdAndUpdate({ '_id': id }, data);
-                if (editBloodGroup) {
-                    let result = {
-                        statusCode: 200,
-                        result: null,
-                        message: 'BloodGroup upadated successfully',
-                    }
-
-                    resolve(result);
-                } else {
-                    let result = {
-                        statusCode: 400,
-                        message: "Error while update the BloodGroup",
-                    }
-
-                    resolve(result);
-                }
-
-
-            } catch (error) {
-                console.log("Error In Update BloodGroup!! " + error.message);
-                let obj = {
+            } else {
+                return {
                     statusCode: 400,
-                    message: 'Error while update the BloodGroup',
-                    result: null
+                    message: "Error while updating the BloodGroup",
                 };
-                resolve(obj);
-
             }
-
-
-
-
-
-
-
-        })
-    },
-    getSingleBloodGroup: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('BloodGroup').findById(data);
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Single BloodGroup "
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get Single BloodGroup !! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error While Single BloodGroup "
-
-                };
-                resolve(obj);
-
-            }
-        })
+        } catch (error) {
+            console.log("Error In Update BloodGroup!! " + error.message);
+            return {
+                statusCode: 400,
+                message: 'Error while updating the BloodGroup',
+                result: null
+            };
+        }
     },
 
-    deleteBloodGroup: async function () {
-        return new Promise(async function (resolve, reject) {
+    getSingleBloodGroup: async function (id) {
+        try {
+            let bloodGroup = await RAR.BloodGroup.findByPk(id);
+            return {
+                statusCode: 200,
+                result: bloodGroup,
+                message: "Single BloodGroup retrieved successfully"
+            };
+        } catch (error) {
+            console.log("Error In Get Single BloodGroup!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while retrieving the single BloodGroup"
+            };
+        }
+    },
 
-            try {
-
-                let deleteBloodGroup = await RAR.Mongoose.model('BloodGroup').deleteOne();
-
-                let result = {
+    deleteBloodGroup: async function (id) {
+        try {
+            let deleted = await RAR.BloodGroup.destroy({ where: { id } });
+            if (deleted) {
+                return {
                     statusCode: 200,
                     result: null,
                     message: "BloodGroup Deleted",
-                }
-                resolve(result);
-
-            } catch (error) {
-                console.log("Error while Delete BloodGroup " + error.message);
-                let obj = {
+                };
+            } else {
+                return {
                     statusCode: 400,
-                    message: 111,
+                    message: "Error while deleting the BloodGroup",
                     result: null,
                 };
-                resolve(obj);
-
             }
-
-        })
+        } catch (error) {
+            console.log("Error while deleting BloodGroup " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while deleting BloodGroup",
+                result: null,
+            };
+        }
     },
-
-
-
-}
+};

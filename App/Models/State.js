@@ -1,19 +1,24 @@
 'use strict';
 const RAR = require('../../common/Foundation');
 
-const Schema = RAR.Mongoose.Schema;
+// Define the Sequelize model for 'State'
 RAR.StateSchema = {
     name: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      status: {
-        type: String,
-        required: true,
-        enum: ['active', 'inactive'], // You can define your own set of valid statuses
-        default: 'active', // Default value for status
+        type: RAR.DataTypes.STRING,
+        allowNull: false,  // Equivalent to `required: true` in Mongoose
+        unique: true
     },
+    status: {
+        type: RAR.DataTypes.ENUM('active', 'inactive'),  // Enum for allowed values
+        allowNull: false,
+        defaultValue: 'active'  // Default value for status
+    }
 };
-const StateSchema = new Schema(RAR.StateSchema, { collection: 'State' });
-RAR.Mongoose.model('State', StateSchema);
+
+// Define the Sequelize model
+RAR.State = RAR.Sequelize.define('State', RAR.StateSchema, {
+    tableName: 'State',  // Specifies the table name
+    timestamps: false    // Disables automatic creation of createdAt and updatedAt fields
+});
+
+module.exports = RAR.State;

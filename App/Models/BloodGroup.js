@@ -1,13 +1,18 @@
 'use strict';
 const RAR = require('../../common/Foundation');
 
-const Schema = RAR.Mongoose.Schema;
 RAR.BloodGroupSchema = {
     name: {
-        type: String,
-        required: true,
+        type: RAR.DataTypes.STRING,
+        allowNull: false,
         unique: true,
-      },
+    },
 };
-const BloodGroupSchema = new Schema(RAR.BloodGroupSchema, { collection: 'BloodGroup' });
-RAR.Mongoose.model('BloodGroup', BloodGroupSchema);
+
+// Define the Sequelize model
+RAR.BloodGroup = RAR.Sequelize.define('BloodGroup', RAR.BloodGroupSchema, {
+    tableName: 'BloodGroup', // Specifies the table name
+    timestamps: false,       // Disables automatic creation of createdAt and updatedAt fields
+});
+
+module.exports = RAR.BloodGroup;

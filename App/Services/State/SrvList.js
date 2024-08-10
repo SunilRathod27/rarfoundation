@@ -1,169 +1,138 @@
 'use strict';
-const { object } = require('joi');
 const RAR = require('../../../common/Foundation');
+
 module.exports = {
 
     getStateList: async function () {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('State').find({status:'active'}).lean()
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Getting State list succesfully"
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All State List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while State list"
-
-                };
-                resolve(obj);
-
-            }
-        })
+        try {
+            let List = await RAR.State.findAll({ where: { status: 'active' } });
+            let result = {
+                statusCode: 200,
+                result: List,
+                message: "Getting State list successfully"
+            };
+            return result;
+        } catch (error) {
+            console.log("Error In Get All State List!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: "Error while fetching State list"
+            };
+            return obj;
+        }
     },
 
     getStateByName: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('State').find({ "name": data }).lean();
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Get single State successfully"
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All State Name List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while get the single State record"
-
-                };
-                resolve(obj);
-
-            }
-        })
+        try {
+            let List = await RAR.State.findAll({ where: { name: data } });
+            let result = {
+                statusCode: 200,
+                result: List,
+                message: "Get single State successfully"
+            };
+            return result;
+        } catch (error) {
+            console.log("Error In Get All State Name List!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: "Error while getting the single State record"
+            };
+            return obj;
+        }
     },
+
     addState: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let addState = await RAR.Mongoose.model('State').create(data);
-                let result = {
-                    statusCode: 200,
-                    result: null,
-                    message: "New State added sucessfully",
-                }
-                resolve(result);
-            } catch (error) {
-                console.log(" Error In Add New State!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while add new State",
-                    result: null
-                };
-                resolve(obj);
-
-            }
-
-        })
+        try {
+            let addState = await RAR.State.create(data);
+            let result = {
+                statusCode: 200,
+                result: addState,
+                message: "New State added successfully"
+            };
+            return result;
+        } catch (error) {
+            console.log("Error In Add New State!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: "Error while adding new State",
+                result: null
+            };
+            return obj;
+        }
     },
+
     editState: async function (id, data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-
-                let editState = await RAR.Mongoose.model('State').findByIdAndUpdate({ '_id': id }, data);
-                if (editState) {
-                    let result = {
-                        statusCode: 200,
-                        result: null,
-                        message: 'State upadated successfully',
-                    }
-
-                    resolve(result);
-                } else {
-                    let result = {
-                        statusCode: 400,
-                        message: "Error while update the State",
-                    }
-
-                    resolve(result);
-                }
-
-
-            } catch (error) {
-                console.log("Error In Update State!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: 'Error while update the State',
-                    result: null
+        try {
+            let [affectedRows] = await RAR.State.update(data, { where: { id: id } });
+            if (affectedRows > 0) {
+                let result = {
+                    statusCode: 200,
+                    result: null,
+                    message: 'State updated successfully'
                 };
-                resolve(obj);
-
+                return result;
+            } else {
+                let result = {
+                    statusCode: 400,
+                    message: "Error while updating the State"
+                };
+                return result;
             }
-
-
-
-
-
-
-
-        })
+        } catch (error) {
+            console.log("Error In Update State!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: 'Error while updating the State',
+                result: null
+            };
+            return obj;
+        }
     },
+
     getSingleState: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('State').findById(data);
-                let result = {
-                    statusCode: 200,
-                    result: List,
-                    message: "Single State "
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get Single State !! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error While Single State "
-
-                };
-                resolve(obj);
-
-            }
-        })
+        try {
+            let state = await RAR.State.findByPk(data);
+            let result = {
+                statusCode: 200,
+                result: state,
+                message: "Single State fetched successfully"
+            };
+            return result;
+        } catch (error) {
+            console.log("Error In Get Single State!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: "Error while fetching Single State"
+            };
+            return obj;
+        }
     },
 
-    deleteState: async function () {
-        return new Promise(async function (resolve, reject) {
-
-            try {
-
-                let deleteState = await RAR.Mongoose.model('State').deleteOne();
-
+    deleteState: async function (id) {
+        try {
+            let affectedRows = await RAR.State.destroy({ where: { id: id } });
+            if (affectedRows > 0) {
                 let result = {
                     statusCode: 200,
                     result: null,
-                    message: "State Deleted",
-                }
-                resolve(result);
-
-            } catch (error) {
-                console.log("Error while Delete State " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: 111,
-                    result: null,
+                    message: "State deleted successfully"
                 };
-                resolve(obj);
-
+                return result;
+            } else {
+                let result = {
+                    statusCode: 400,
+                    message: "Error while deleting the State"
+                };
+                return result;
             }
-
-        })
-    },
-
-
-
-}
+        } catch (error) {
+            console.log("Error while Delete State!! " + error.message);
+            let obj = {
+                statusCode: 400,
+                message: 'Error while deleting the State',
+                result: null
+            };
+            return obj;
+        }
+    }
+};

@@ -1,13 +1,34 @@
 'use strict';
 const RAR = require('../../common/Foundation');
 
-const Schema = RAR.Mongoose.Schema;
 RAR.CauseSchema = {
-    title: { type: String , default: ''},
-    link: { type: String , default: ''},
-    image: { type: String, required: true },
-    description: { type: String, required: true },
-    date: { type: Date, default: Date.now }
+    title: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    link: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    image: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    description: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+
 };
-const CauseSchema = new Schema(RAR.CauseSchema, { collection: 'Causes' });
-RAR.Mongoose.model('Causes', CauseSchema);
+
+// Define the Sequelize model
+RAR.Cause = RAR.Sequelize.define('Cause', RAR.CauseSchema, {
+    tableName: 'Cause', // Specifies the table name
+    timestamps: false,       // Disables automatic creation of createdAt and updatedAt fields
+});
+
+module.exports = RAR.Cause;

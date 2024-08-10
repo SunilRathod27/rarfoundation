@@ -1,196 +1,158 @@
 'use strict';
-const { object } = require('joi');
+
 const RAR = require('../../../common/Foundation');
 module.exports = {
 
-   
-    getDistrictList : async function (stateName) {
-    try {
-        const districts = await RAR.Mongoose.model('District').aggregate([
-            {
-                $lookup: {
-                    from: 'State', // The name of the State collection
-                    localField: 'state',
-                    foreignField: '_id',
-                    as: 'stateDetails'
+    getDistrictList: async function (stateName) {
+        try {
+            const districts = await RAR.District.findAll({
+                where: {
+                    state: stateName // Adjust this field according to your schema
                 }
-            },
-            {
-                $unwind: '$stateDetails'
-            },
-            {
-                $match: {
-                    'stateDetails.name': stateName
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    // Add other fields you want to include in the result
-                }
-            }
-        ]);
+            });
 
-        if (districts.length === 0) {
+            if (districts.length === 0) {
+                return {
+                    statusCode: 404,
+                    message: "Districts not found for the given state name"
+                };
+            }
+
             return {
-                statusCode: 404,
-                message: "Districts not found for the given state name"
+                statusCode: 200,
+                result: districts,
+                message: "District list retrieved successfully"
+            };
+        } catch (error) {
+            console.error("Error retrieving districts list: ", error.message);
+            return {
+                statusCode: 400,
+                message: "Error while retrieving district list"
             };
         }
-
-        return {
-            statusCode: 200,
-            result: districts,
-            message: "District list retrieved successfully"
-        };
-    } catch (error) {
-        console.error("Error retrieving districts list: ", error.message);
-        return {
-            statusCode: 400,
-            message: "Error while retrieving district list"
-        };
-    }
-        },
+    },
 
     getDistrictByName: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('District').find({ "name": data }).lean();
-                let result = {
+        try {
+            const district = await RAR.District.findOne({
+                where: { name: data }
+            });
+
+            if (district) {
+                return {
                     statusCode: 200,
-                    result: List,
+                    result: district,
                     message: "Get single District successfully"
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get All District Name List!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while get the single District record"
-
                 };
-                resolve(obj);
-
+            } else {
+                return {
+                    statusCode: 404,
+                    message: "District not found"
+                };
             }
-        })
+        } catch (error) {
+            console.log("Error In Get District By Name!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while getting the single District record"
+            };
+        }
     },
+
     addDistrict: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let addDistrict = await RAR.Mongoose.model('District').create(data);
-                let result = {
-                    statusCode: 200,
-                    result: null,
-                    message: "New District added sucessfully",
-                }
-                resolve(result);
-            } catch (error) {
-                console.log(" Error In Add New District!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error while add new District",
-                    result: null
-                };
-                resolve(obj);
-
-            }
-
-        })
+        try {
+            const newDistrict = await RAR.District.create(data);
+            return {
+                statusCode: 200,
+                result: newDistrict,
+                message: "New District added successfully",
+            };
+        } catch (error) {
+            console.log("Error In Add New District!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while adding new District",
+                result: null
+            };
+        }
     },
+
     editDistrict: async function (id, data) {
-        return new Promise(async function (resolve, reject) {
-            try {
+        try {
+            const [updated] = await RAR.District.update(data, {
+                where: { id: id }
+            });
 
-                let editDistrict = await RAR.Mongoose.model('District').findByIdAndUpdate({ '_id': id }, data);
-                if (editDistrict) {
-                    let result = {
-                        statusCode: 200,
-                        result: null,
-                        message: 'District upadated successfully',
-                    }
-
-                    resolve(result);
-                } else {
-                    let result = {
-                        statusCode: 400,
-                        message: "Error while update the District",
-                    }
-
-                    resolve(result);
-                }
-
-
-            } catch (error) {
-                console.log("Error In Update District!! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: 'Error while update the District',
-                    result: null
-                };
-                resolve(obj);
-
-            }
-
-
-
-
-
-
-
-        })
-    },
-    getSingleDistrict: async function (data) {
-        return new Promise(async function (resolve, reject) {
-            try {
-                let List = await RAR.Mongoose.model('District').findById(data);
-                let result = {
+            if (updated) {
+                return {
                     statusCode: 200,
-                    result: List,
-                    message: "Single District "
-                }
-                resolve(result);
-            } catch (error) {
-                console.log("Error In Get Single District !! " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: "Error While Single District "
-
+                    message: 'District updated successfully',
                 };
-                resolve(obj);
-
+            } else {
+                return {
+                    statusCode: 400,
+                    message: "Error while updating the District",
+                };
             }
-        })
+        } catch (error) {
+            console.log("Error In Update District!! " + error.message);
+            return {
+                statusCode: 400,
+                message: 'Error while updating the District',
+                result: null
+            };
+        }
     },
 
-    deleteDistrict: async function () {
-        return new Promise(async function (resolve, reject) {
+    getSingleDistrict: async function (id) {
+        try {
+            const district = await RAR.District.findByPk(id);
 
-            try {
-
-                let deleteDistrict = await RAR.Mongoose.model('District').deleteOne();
-
-                let result = {
+            if (district) {
+                return {
                     statusCode: 200,
-                    result: null,
+                    result: district,
+                    message: "Single District"
+                };
+            } else {
+                return {
+                    statusCode: 404,
+                    message: "District not found"
+                };
+            }
+        } catch (error) {
+            console.log("Error In Get Single District!! " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error While Fetching Single District"
+            };
+        }
+    },
+
+    deleteDistrict: async function (id) {
+        try {
+            const deleted = await RAR.District.destroy({
+                where: { id: id }
+            });
+
+            if (deleted) {
+                return {
+                    statusCode: 200,
                     message: "District Deleted",
-                }
-                resolve(result);
-
-            } catch (error) {
-                console.log("Error while Delete District " + error.message);
-                let obj = {
-                    statusCode: 400,
-                    message: 111,
-                    result: null,
                 };
-                resolve(obj);
-
+            } else {
+                return {
+                    statusCode: 404,
+                    message: "District not found"
+                };
             }
-
-        })
-    },
-
-
-
-}
+        } catch (error) {
+            console.log("Error while Deleting District " + error.message);
+            return {
+                statusCode: 400,
+                message: "Error while deleting District",
+                result: null,
+            };
+        }
+    }
+};

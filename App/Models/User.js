@@ -1,84 +1,93 @@
 'use strict';
 const RAR = require('../../common/Foundation');
-const Schema = RAR.Mongoose.Schema;
-RAR.User = {
+
+// Define the Sequelize model for 'User'
+RAR.UserSchema = {
     registrationId: {
-      type: String,
-      unique: true,
-      default: '',
+        type: RAR.DataTypes.STRING,
+        unique: true,
+        defaultValue: ''
     },
     activationId: {
-      type: String,
-      unique: true,
-     default:''
-  },
-      name: {
-        type: String,
-        required: true,
-      },
-      fathername: {
-        type: String,
-        required: true,
-      },
-      surname: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        unique: true, 
-        required: true, 
-        trim: true, 
-        lowercase: true, 
-        match: [/^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Please fill a valid email address.']
-      },
-      birthday: {
-        type: Date,
-        required: true,
-      },
-      address: {
-        type: String,
-        required: true,
-      },
-      state: {
-        type: RAR.Mongoose.Schema.Types.ObjectId,
-        ref: 'State',
-        required: true,
-      },
-      district: {
-        type: RAR.Mongoose.Schema.Types.ObjectId,
-        ref: 'District',
-        required: true,
-      },
-      whatsapp: {
-        type: String,
-        required: true,
-      },
-      idProof: {
-        type: Buffer,
-        required: true,
-      },
-      photo: {
-        type: String,
-        required: true,
-      },
-      bloodGroup: {
-        type: RAR.Mongoose.Schema.Types.ObjectId,
-        ref: 'BloodGroup',
-        required: true,
-      },
-      designation: {
-        type: String,
-        required: true,
-      },
-      status: {
-        type: String,
-        enum: ['active', 'inactive'], 
-        default: 'inactive',
-        required: true,
-      },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+        type: RAR.DataTypes.STRING,
+        unique: true,
+        defaultValue: ''
+    },
+    name: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    fathername: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    surname: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    email: {
+        type: RAR.DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+            isEmail: true
+        }
+    },
+    birthday: {
+        type: RAR.DataTypes.DATE,
+        allowNull: false
+    },
+    address: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    stateId: {  // Changed to STRING
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    districtId: {  // Changed to STRING
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    whatsapp: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    idProof: {
+        type:RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    photo: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    bloodGroupId: {  // Changed to STRING
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    designation: {
+        type: RAR.DataTypes.STRING,
+        allowNull: false
+    },
+    status: {
+        type: RAR.DataTypes.ENUM('active', 'inactive'),
+        allowNull: false,
+        defaultValue: 'inactive'
+    },
+    createdAt: {
+        type: RAR.DataTypes.DATE,
+        defaultValue: RAR.Sequelize.NOW
+    },
+    updatedAt: {
+        type: RAR.DataTypes.DATE,
+        defaultValue: RAR.Sequelize.NOW
+    }
 };
-const User = new Schema(RAR.User, { collection: 'User' });
-RAR.Mongoose.model('User', User);
+
+// Define the Sequelize model
+RAR.User = RAR.Sequelize.define('User', RAR.UserSchema, {
+    tableName: 'User',  // Specifies the table name
+    timestamps: false    // Disables automatic creation of createdAt and updatedAt fields
+});
+
+module.exports = RAR.User;
