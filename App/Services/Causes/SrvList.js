@@ -4,7 +4,6 @@ module.exports = {
     getCausesList: async function () {
         try {
             let List = await RAR.Cause.findAll();
-console.log(JSON.stringify(List, null, 2)); // For better readability
 
             
             let result = {
