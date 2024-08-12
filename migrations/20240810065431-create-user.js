@@ -16,7 +16,6 @@ module.exports = {
       },
       activationId: {
         type: Sequelize.STRING,
-        unique: true,
         defaultValue: ''
       },
       name: {
