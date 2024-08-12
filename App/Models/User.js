@@ -10,7 +10,6 @@ RAR.UserSchema = {
     },
     activationId: {
         type: RAR.DataTypes.STRING,
-        unique: true,
         defaultValue: ''
     },
     name: {
