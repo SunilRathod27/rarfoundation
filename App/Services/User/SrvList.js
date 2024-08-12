@@ -13,6 +13,8 @@ module.exports = {
             };
     
             const emailMessage = await checkDuplicates('email', formData.email);
+            console.log('emailMessage', emailMessage);
+            
             if (emailMessage) return { statusCode: 400, message: emailMessage, result: null };
     
             const whatsappMessage = await checkDuplicates('whatsapp', formData.whatsapp);

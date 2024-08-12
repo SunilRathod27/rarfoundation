@@ -5,12 +5,11 @@ const RAR = require('../../common/Foundation');
 RAR.UserSchema = {
     registrationId: {
         type: RAR.DataTypes.STRING,
-        unique: true,
         defaultValue: ''
     },
     activationId: {
         type: RAR.DataTypes.STRING,
-        defaultValue: ''
+        defaultValue: null
     },
     name: {
         type: RAR.DataTypes.STRING,
@@ -26,7 +25,6 @@ RAR.UserSchema = {
     },
     email: {
         type: RAR.DataTypes.STRING,
-        unique: true,
         allowNull: false,
         validate: {
             isEmail: true
