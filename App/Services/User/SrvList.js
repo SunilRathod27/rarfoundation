@@ -113,12 +113,12 @@ module.exports = {
             let idProofFilePath = 'NA';
             let photoFilePath = 'NA';
     
-            if (formData.idProofPreview) {
-                idProofFilePath = saveImage(formData.idProofPreview, `${registrationId}_1.jpg`);
+            if (formData.idProof) {
+                idProofFilePath = saveImage(formData.idProof, `${registrationId}_1.jpg`);
             }
     
-            if (formData.photoPreview) {
-                photoFilePath = saveImage(formData.photoPreview, `${registrationId}_2.jpg`);
+            if (formData.photo) {
+                photoFilePath = saveImage(formData.photo, `${registrationId}_2.jpg`);
             }
     
             const newUser = {
