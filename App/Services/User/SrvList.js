@@ -23,6 +23,7 @@ module.exports = {
 			// Helper function to convert base64 to Buffer
 			const base64ToBuffer = (base64) => {
 				try {
+					// Check if base64 starts with data URI scheme
 					const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
 					return Buffer.from(base64Data, 'base64');
 				} catch (error) {
@@ -30,12 +31,14 @@ module.exports = {
 				}
 			};
 
+
 			// Helper function to process and resize images
 			const processImage = async (imageBuffer) => {
 				try {
 					if (!imageBuffer || !imageBuffer.length) {
 						throw new Error('Empty or invalid image buffer');
 					}
+					console.log('Processing image buffer:', imageBuffer);
 					return await sharp(imageBuffer)
 						.resize(800, 600) // Resize as needed
 						.toBuffer();
@@ -44,6 +47,7 @@ module.exports = {
 					throw error; // Rethrow to handle it in the caller
 				}
 			};
+
 
 			// Helper function to save image to file
 			const saveImageToFile = async (imageBuffer, fileName) => {
