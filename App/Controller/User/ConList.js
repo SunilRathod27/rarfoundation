@@ -5,7 +5,7 @@ module.exports = {
 	submitForm: async function (req, res) {
 		try {
 			// Call the service layer to handle the form submission
-			const result = await RAR.App.Services.User.SrvList.submitForm(req.body, req.files);
+			const result = await RAR.App.Services.User.SrvList.submitForm(req.body);
 
 			// Check if the result indicates success
 			if (result.statusCode === 200) {
