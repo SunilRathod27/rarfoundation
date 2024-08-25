@@ -2,40 +2,19 @@
 const RAR = require('../../../common/Foundation');
 
 try {
-    // for login 
-    RAR.Router.post('/User/login', RAR.App.Middlewares.User.UserMid.validateLoginData, RAR.App.Controller.User.ConList.login);
-
-    // for sign up users
-    RAR.Router.post('/User/signup', RAR.App.Middlewares.User.UserMid.validateUserData,
-        RAR.App.Controller.User.ConList.createUser);
-
-
-    RAR.Router.post('/api/User/Submit-form',RAR.App.Controller.User.ConList.submitForm);
-    // RAR.Router.get('/api/User/inactive-users',RAR.App.Controller.User.ConList.getUserInactiveList);
-
-    // for update User profile    
-    RAR.Router.put('/User/profile', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization, RAR.App.Middlewares.User.UserMid.validateUpdatePayload,
-        RAR.App.Controller.User.ConList.profile);
-
-    // for change User password
-    RAR.Router.put('/User/password', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization, RAR.App.Middlewares.User.UserMid.updatepasvalidate,
-        RAR.App.Controller.User.ConList.password);
-
-    // for update address
-    RAR.Router.put('/User/address/:addressId', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization, RAR.App.Middlewares.User.UserMid.validateAddresss,
-        RAR.App.Controller.User.ConList.changeAddress);
-
-    // for add new address
-    RAR.Router.post('/User/address', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization, RAR.App.Middlewares.User.UserMid.validateAddresssAdd,
-        RAR.App.Controller.User.ConList.addnewaddress);
-
-    // for forget password
-    RAR.Router.put('/User/forgotPassword', RAR.App.Middlewares.commoMiddleware.commonMiddleware.checkAuthorization,
-        RAR.App.Controller.User.ConList.forgotPassword);
+	RAR.Router.post('/api/User/admin-login', RAR.App.Controller.User.ConList.adminLogin);
+	RAR.Router.post('/api/User/adminCreate', RAR.App.Controller.User.ConList.adminCreate);
+	RAR.Router.post('/api/User/Submit-form', RAR.App.Controller.User.ConList.submitForm);
+	RAR.Router.get('/api/Users/inactive', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.inactiveUser);
+	RAR.Router.get('/api/Users/active', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activeUser);
+	RAR.Router.get('/api/Users/inactive-export', RAR.App.Controller.User.ConList.exportInactiveUsers);
+	RAR.Router.get('/api/Users/active-export', RAR.App.Controller.User.ConList.exportActiveUsers);
+	RAR.Router.post('/api/User/admin-logout', RAR.App.Controller.User.ConList.adminLogout);
+	RAR.Router.post('/api/User/activate-user', RAR.App.Controller.User.ConList.activateUser);
 
 } catch (error) {
 
-    console.log("Error in User Router :", error)
+	console.log("Error in User Router :", error)
 }
 
 module.exports = RAR.Router
