@@ -112,8 +112,8 @@ const swaggerDocument = require('../Swagger/swagger.json');
 
 RAR.App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-RAR.App.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
-RAR.App.use(bodyParser.json({ limit: '50mb' }));
+RAR.App.use(bodyParser.urlencoded({ limit: '150mb', extended: false }));
+RAR.App.use(bodyParser.json({ limit: '150mb' }));
 RAR.App.use(fileupload());
 RAR.App.use(express.static('./build'));
 RAR.App.use(express.static('./public'));
@@ -123,7 +123,13 @@ RAR.App.use(cors({
 	methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 	credentials: true, // If you need to allow cookies or other credentials
 }));
-
+RAR.App.use((err, req, res, next) => {
+	if (err.type === 'entity.too.large') {
+		res.status(413).send('Payload too large. Please reduce the file size and try again.');
+	} else {
+		next(err);
+	}
+});
 const port = process.env.PORT || 3000;
 let date = new Date();
 let dateTime = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' Time ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();

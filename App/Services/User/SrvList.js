@@ -1,8 +1,9 @@
 'use strict';
 
 const RAR = require('../../../common/Foundation'); // Adjust the path and import according to your setup
-const fs = require('fs');
+const sharp = require('sharp');
 const path = require('path');
+const fs = require('fs');
 
 module.exports = {
 	// submitForm: async function (formData) {
@@ -94,7 +95,7 @@ module.exports = {
 			};
 
 			const emailMessage = await checkDuplicates('email', formData.email);
-			console.log('emailMessage', emailMessage);
+
 
 			if (emailMessage) return { statusCode: 400, message: emailMessage, result: null };
 
@@ -103,22 +104,51 @@ module.exports = {
 
 			const registrationId = await this.generateUniqueRegistrationId();
 
-			const saveImage = (base64String, fileName) => {
-				const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
-				const filePath = path.join(__dirname, '../../../public/uploads', fileName);
-				RAR.FS.writeFileSync(filePath, base64Data, { encoding: 'base64' });
-				return fileName;
+
+
+			const saveImage = async (base64String, targetSizeKB, fileName) => {
+				try {
+					const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+					const imageBuffer = Buffer.from(base64Data, 'base64');
+
+					const filePath = path.join(__dirname, '../../../public/uploads', fileName);
+
+					let image = sharp(imageBuffer);
+
+
+					let resizedImageBuffer = await image
+						.resize({ width: 800 })
+						.jpeg({ quality: 70 })
+						.toBuffer();
+
+					let fileSizeKB = resizedImageBuffer.length / 1024;
+
+
+					while (fileSizeKB > targetSizeKB) {
+						resizedImageBuffer = await sharp(resizedImageBuffer)
+							.jpeg({ quality: Math.max(50, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2)) }) // Refine quality
+							.toBuffer();
+
+						fileSizeKB = resizedImageBuffer.length / 1024;
+					}
+
+					fs.writeFileSync(filePath, resizedImageBuffer);
+					return fileName;
+				} catch (error) {
+					console.error('Error saving image:', error);
+					throw error;
+				}
 			};
-
-			let idProofFilePath = 'NA';
-			let photoFilePath = 'NA';
-
+			let idProofFilePath = null;
 			if (formData.idProofPreview) {
-				idProofFilePath = saveImage(formData.idProofPreview, `${registrationId}_1.jpg`);
+				idProofFilePath = await saveImage(formData.idProofPreview, 100, `${registrationId}_1.jpg`);
+
 			}
 
+			let photoFilePath = null;
 			if (formData.photoPreview) {
-				photoFilePath = saveImage(formData.photoPreview, `${registrationId}_2.jpg`);
+				photoFilePath = await saveImage(formData.photoPreview, 100, `${registrationId}_2.jpg`);
+
 			}
 
 			const newUser = {
