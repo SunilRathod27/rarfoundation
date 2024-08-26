@@ -4,7 +4,7 @@ const RAR = require('../../../common/Foundation'); // Adjust the path and import
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
-
+const { v4: uuidv4 } = require('uuid');
 module.exports = {
 	// submitForm: async function (formData) {
 	//     try {
@@ -141,13 +141,13 @@ module.exports = {
 			};
 			let idProofFilePath = null;
 			if (formData.idProofPreview) {
-				idProofFilePath = await saveImage(formData.idProofPreview, 100, `${registrationId}_1.jpg`);
+				idProofFilePath = await saveImage(formData.idProofPreview, 100, `idProof_${uuidv4()}.jpg`);
 
 			}
 
 			let photoFilePath = null;
 			if (formData.photoPreview) {
-				photoFilePath = await saveImage(formData.photoPreview, 100, `${registrationId}_2.jpg`);
+				photoFilePath = await saveImage(formData.photoPreview, 100, `photo_${uuidv4()}.jpg`);
 
 			}
 
@@ -195,7 +195,32 @@ module.exports = {
 			};
 		}
 	},
-
+	editDocuments: async function (id, data) {
+		try {
+			let [affectedRows] = await RAR.User.update(data, { where: { id } });
+			if (affectedRows) {
+				let result = {
+					statusCode: 200,
+					result: null,
+					message: 'Document uploaded successfully'
+				};
+				return result;
+			} else {
+				let result = {
+					statusCode: 400,
+					message: "Error while updating the Document"
+				};
+				return result;
+			}
+		} catch (error) {
+			console.log("Error In Update Document!! " + error.message);
+			return {
+				statusCode: 400,
+				message: 'Error while updating the Document',
+				result: null
+			};
+		}
+	},
 	generateUniqueRegistrationId: async function () {
 		let isUnique = false;
 		let registrationId;

@@ -7,10 +7,12 @@ try {
 	RAR.Router.post('/api/User/Submit-form', RAR.App.Controller.User.ConList.submitForm);
 	RAR.Router.get('/api/Users/inactive', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.inactiveUser);
 	RAR.Router.get('/api/Users/active', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activeUser);
-	RAR.Router.get('/api/Users/inactive-export', RAR.App.Controller.User.ConList.exportInactiveUsers);
-	RAR.Router.get('/api/Users/active-export', RAR.App.Controller.User.ConList.exportActiveUsers);
+	RAR.Router.put('/api/Users/update-documents/:id', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.updateDocuments);
+
+	RAR.Router.get('/api/Users/inactive-export', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.exportInactiveUsers);
+	RAR.Router.get('/api/Users/active-export', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.exportActiveUsers);
 	RAR.Router.post('/api/User/admin-logout', RAR.App.Controller.User.ConList.adminLogout);
-	RAR.Router.post('/api/User/activate-user', RAR.App.Controller.User.ConList.activateUser);
+	RAR.Router.post('/api/User/activate-user', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activateUser);
 
 } catch (error) {
 

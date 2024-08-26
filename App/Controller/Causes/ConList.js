@@ -133,9 +133,19 @@ module.exports = {
 
 			// Update causes with the new image filename if available
 			const updateData = { ...req.body };
+			const existingCause = await RAR.App.Services.Causes.SrvList.getCauseById(req.params.id);
+
+			if (!existingCause) {
+				return res.status(404).send({ message: 'Cause not found' });
+			}
+
+			// Check if imageFileName is provided, otherwise use existing image filename
 			if (imageFileName) {
 				updateData.image = imageFileName;
+			} else {
+				updateData.image = existingCause.image; // Use the existing image filename if no new image is provided
 			}
+
 			const editCauses = await RAR.App.Services.Causes.SrvList.editCauses(req.params.id, updateData);
 			res.send(editCauses);
 		} catch (error) {

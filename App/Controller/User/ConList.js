@@ -3,7 +3,10 @@ const RAR = require('../../../common/Foundation');
 const Sequelize = require('sequelize');
 const Sequential = require('sequential-ids');
 const revokedTokens = new Set();
-
+const sharp = require('sharp');
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 module.exports = {
 	submitForm: async function (req, res) {
 		try {
@@ -157,7 +160,7 @@ module.exports = {
 			RAR.Xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
 			RAR.Xlsx.writeFile(wb, './public/' + fileName);
 
-			res.send({ statusCode: 200, message: "", result: fileName });
+			res.send({ statusCode: 200, message: " Inactive users exported successfully", result: fileName });
 		} catch (error) {
 			console.error('Error exporting inactive users:', error);
 			res.send({ statusCode: 500, message: 'Server error', result: null });
@@ -196,7 +199,7 @@ module.exports = {
 			RAR.Xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
 			RAR.Xlsx.writeFile(wb, './public/' + fileName);
 
-			res.send({ statusCode: 200, message: "", result: fileName });
+			res.send({ statusCode: 200, message: "Active users exported successfully", result: fileName });
 		} catch (error) {
 			console.error('Error exporting active users:', error);
 			res.send({ statusCode: 500, message: 'Server error', result: null });
@@ -270,7 +273,7 @@ module.exports = {
 			await user.update({ status: 'active', activationId: newActivationId });
 			let obj = {
 				statusCode: 200,
-				message: "User activated successfully",
+				message: `User activated successfully. Activation ID: ${newActivationId}`,
 				result: newActivationId
 			}
 
@@ -285,6 +288,67 @@ module.exports = {
 			}
 
 			res.send(obj);
+		}
+	},
+
+	updateDocuments: async function (req, res) {
+		try {
+
+			const saveImage = async (base64String, targetSizeKB, fileName) => {
+				try {
+					const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+					const imageBuffer = Buffer.from(base64Data, 'base64');
+					const filePath = path.join(__dirname, '../../../public/uploads', fileName);
+
+					let image = sharp(imageBuffer);
+
+					// Resize image initially
+					let resizedImageBuffer = await image
+						.resize({ width: 1024 }) // Adjust initial width as needed
+						.jpeg({ quality: 85 })  // Set initial quality
+						.toBuffer();
+
+					let fileSizeKB = resizedImageBuffer.length / 1024;
+
+					// Adjust quality if needed
+					while (fileSizeKB > targetSizeKB) {
+						resizedImageBuffer = await sharp(resizedImageBuffer)
+							.jpeg({ quality: Math.max(50, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2)) }) // Refine quality
+							.toBuffer();
+
+						fileSizeKB = resizedImageBuffer.length / 1024;
+					}
+
+					fs.writeFileSync(filePath, resizedImageBuffer);
+					return fileName;
+				} catch (error) {
+					console.error('Error saving Document:', error);
+					throw error;
+				}
+			};
+
+			// Check if an image is provided in the request
+			let previewPhotoUrl;
+			const updateData = { ...req.body };
+			if (req.body.previewPhotoUrl) {
+				// Save and resize the image before updating User
+				previewPhotoUrl = await saveImage(req.body.previewPhotoUrl, 100, `photo_${uuidv4()}.jpg`);
+				updateData.photo = previewPhotoUrl;
+			}
+			let previewIdProofUrl;
+			if (req.body.previewIdProofUrl) {
+				previewIdProofUrl = await saveImage(req.body.previewIdProofUrl, 100, `idProof_${uuidv4()}.jpg`);
+				updateData.idProof = previewIdProofUrl;
+			}
+			const editDocuments = await RAR.App.Services.User.SrvList.editDocuments(req.params.id, updateData);
+			res.send(editDocuments);
+		} catch (error) {
+			console.error("Error while updating Documents: " + error.message);
+			res.status(400).send({
+				statusCode: 400,
+				message: "Error while updating Documents",
+				result: null
+			});
 		}
 	}
 
