@@ -63,14 +63,8 @@ module.exports = {
 			if (!isMatch) {
 				return res.status(400).json({ message: 'Invalid login ID or password' });
 			}
-			let otp = ''
+			let otp = crypto.randomInt(100000, 999999).toString();
 
-			if (loginId !== 'sunil') {
-				otp = loginId ? 'sunil' : crypto.randomInt(100000, 999999).toString();
-			}
-			else {
-				otp = '7270';
-			}
 			await RAR.Otp.create({
 				adminId: admin.id,
 				otp,
@@ -91,9 +85,9 @@ module.exports = {
 				subject: 'Your OTP for Admin Login',
 				text: `Your OTP for login is ${otp}. It is valid for 10 minutes.`,
 			};
-			if (loginId !== 'sunil') {
-				await transporter.sendMail(mailOptions);
-			}
+
+			await transporter.sendMail(mailOptions);
+
 
 
 			res.status(200).json({ message: 'OTP sent to your email', loginId: admin.loginId });
