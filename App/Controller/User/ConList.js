@@ -68,7 +68,7 @@ module.exports = {
 			await RAR.Otp.create({
 				adminId: admin.id,
 				otp,
-				expiresAt: Date.now() + 10 * 60 * 1000, // Expires in 10 minutes
+				expiresAt: Date.now() + 1 * 60 * 1000, // Expires in 1 minute
 			});
 
 			const transporter = nodemailer.createTransport({
@@ -82,9 +82,28 @@ module.exports = {
 			const mailOptions = {
 				from: process.env.EMAIL_USER,
 				to: admin.email,
-				subject: 'Your OTP for Admin Login',
-				text: `Your OTP for login is ${otp}. It is valid for 10 minutes.`,
+				subject: 'Your One-Time Password (OTP) for Secure Login',
+				text: `Dear User,
+			
+			As part of our secure login process,
+			
+			Your One-Time Password (OTP) is ${otp}.
+			
+			This OTP is valid for the next 1 minute.
+			
+			Best Regards,
+			RaR Foundation Bharat
+			www.rarfoundationbharat.com`,
+				html: `<p>Dear User,</p>
+			<p>As part of our secure login process,</p>
+			<p>Your One-Time Password (OTP) is <strong>${otp}</strong>.</p>
+			<p>This OTP is valid for the next 1 minute.</p>
+			<p>Best Regards,<br>
+			<strong>RaR Foundation Bharat</strong><br>
+			<a href="http://www.rarfoundationbharat.com" style="color: #1a73e8; text-decoration: none;">www.rarfoundationbharat.com</a></p>`
 			};
+
+
 
 			await transporter.sendMail(mailOptions);
 
