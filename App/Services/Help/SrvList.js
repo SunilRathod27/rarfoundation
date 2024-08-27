@@ -42,7 +42,7 @@ module.exports = {
 			return {
 				statusCode: 200,
 				result: addHelp,
-				message: "New Help added successfully",
+				message: "તમારી સમસ્યા નોંધાઈ ગઈ છે. RAR Foundation ટૂંક સમયમાં તમારો સંપર્ક કરશે",
 			};
 		} catch (error) {
 			console.log("Error In Add New Help!! " + error.message);
