@@ -239,4 +239,5 @@ module.exports = {
 
 		return registrationId;
 	},
-};
+
+}
