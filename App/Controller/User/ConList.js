@@ -237,9 +237,9 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Registration Id', 'Name', 'Email', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
+				['Registration Id', 'Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.registrationId, user.name, user.email, user.designation,
+					user.registrationId, user.name, user.email, user.whatsapp, user.designation,
 					user.stateId, user.districtId, user.address,
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
@@ -276,9 +276,9 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Activation Id', 'Registration Id', 'Name', 'Email', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
+				['Activation Id', 'Registration Id', 'Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.activationId, user.registrationId, user.name, user.email, user.designation,
+					user.activationId, user.registrationId, user.name, user.whatsapp, user.email, user.designation,
 					user.stateId, user.districtId, user.address,
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
