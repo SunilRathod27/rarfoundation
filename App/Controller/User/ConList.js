@@ -276,15 +276,15 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Activation Id', 'Registration Id', 'Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
+				['Activation Id', 'Name', ' BirthDate', 'Whatsapp No.', 'Email', 'District'],
 				...users.map(user => [
-					user.activationId, user.registrationId, user.name, user.whatsapp, user.email, user.designation,
-					user.stateId, user.districtId, user.address,
-					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
-					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
+					user.activationId, user.name, user.birthday, user.whatsapp, user.email,
+					user.districtId,
+
 				])
 			];
-
+			// user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
+			// user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
 			const fileName = 'active_users_export.xlsx';
 			let ws = RAR.Xlsx.utils.aoa_to_sheet(fileData);
 			let wb = RAR.Xlsx.utils.book_new();
