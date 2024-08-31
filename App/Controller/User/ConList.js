@@ -278,7 +278,7 @@ module.exports = {
 			const fileData = [
 				['Activation Id', 'Name', 'SurName', 'District', 'Whatsapp No.', 'Email', 'Designation', 'State', 'Address', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.activationId, user.name, user.surname, , user.districtId, user.whatsapp, user.email,
+					user.activationId, user.name, user.surname, user.districtId, user.whatsapp, user.email,
 					user.designation, user.stateId, user.address,
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
