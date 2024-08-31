@@ -343,7 +343,7 @@ module.exports = {
 				letters: 0,
 				store: function (key, id) {
 				},
-				restore: "8000",
+				restore: "10000",
 				port: randPort // Using the generated random port
 			});
 
