@@ -41,29 +41,57 @@ module.exports = {
 				try {
 					const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
 					const imageBuffer = Buffer.from(base64Data, 'base64');
-					const fileName = `causes_${uuidv4()}.jpg`;
+					const fileName = `slides_${uuidv4()}.jpg`;
 					const filePath = path.join(__dirname, '../../../public/causes', fileName);
 
 					let image = sharp(imageBuffer);
 
-					// Resize image initially
+					// Initial resize
 					let resizedImageBuffer = await image
 						.resize({ width: 1024 }) // Adjust initial width as needed
 						.jpeg({ quality: 85 })  // Set initial quality
 						.toBuffer();
 
 					let fileSizeKB = resizedImageBuffer.length / 1024;
+					let quality = 85; // Start quality
 
-					// Adjust quality if needed
-					while (fileSizeKB > targetSizeKB) {
-						resizedImageBuffer = await sharp(resizedImageBuffer)
-							.jpeg({ quality: Math.max(50, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2)) }) // Refine quality
+					console.log(`Initial file size: ${fileSizeKB.toFixed(2)} KB`);
+
+					// Adjust quality and resize if needed
+					const maxIterations = 10;
+					let iterations = 0;
+
+					while (fileSizeKB > targetSizeKB && iterations < maxIterations) {
+						// Reduce quality
+						quality = Math.max(30, Math.round(quality - ((fileSizeKB - targetSizeKB) / targetSizeKB) * 50));
+
+						console.log(`Adjusting quality to: ${quality}`);
+
+						// Adjust size proportionally if needed
+						const resizeFactor = Math.max(0.5, (targetSizeKB / fileSizeKB)); // Resize factor to help meet size target
+						let newWidth = Math.floor(1024 * resizeFactor);
+
+						console.log(`Resizing with width: ${newWidth}px`);
+
+						resizedImageBuffer = await sharp(imageBuffer)
+							.resize({ width: newWidth, withoutEnlargement: true }) // Resize proportionally
+							.jpeg({ quality: quality })
 							.toBuffer();
 
 						fileSizeKB = resizedImageBuffer.length / 1024;
+						console.log(`Resized file size: ${fileSizeKB.toFixed(2)} KB`);
+
+						iterations++;
 					}
 
+					// Ensure a minimum quality and size
+					if (fileSizeKB > targetSizeKB) {
+						console.warn('Image could not be resized to exact target size. File size:', fileSizeKB.toFixed(2), 'KB');
+					}
+
+					// Save the image
 					fs.writeFileSync(filePath, resizedImageBuffer);
+					console.log(`Image saved to ${filePath}`);
 					return fileName;
 				} catch (error) {
 					console.error('Error saving image:', error);
