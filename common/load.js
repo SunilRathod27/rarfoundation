@@ -112,7 +112,7 @@ const swaggerDocument = require('../Swagger/swagger.json');
 
 RAR.App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-RAR.App.use(bodyParser.urlencoded({ limit: '150mb', extended: false }));
+RAR.App.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 RAR.App.use(bodyParser.json({ limit: '150mb' }));
 RAR.App.use(fileupload());
 RAR.App.use(express.static('./build'));
