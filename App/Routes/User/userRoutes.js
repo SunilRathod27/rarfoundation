@@ -7,6 +7,7 @@ try {
 	RAR.Router.post('/api/User/verify-otp', RAR.App.Controller.User.ConList.verifyOtp);
 	RAR.Router.post('/api/User/adminCreate', RAR.App.Controller.User.ConList.adminCreate);
 	RAR.Router.post('/api/User/Submit-form', RAR.App.Controller.User.ConList.submitForm);
+	RAR.Router.put('/api/User/:id/edit-user', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.editUser);
 	RAR.Router.get('/api/Users/inactive', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.inactiveUser);
 	RAR.Router.get('/api/Users/active', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activeUser);
 	RAR.Router.put('/api/Users/update-documents/:id', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.updateDocuments);

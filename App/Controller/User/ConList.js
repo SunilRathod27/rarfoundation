@@ -27,7 +27,27 @@ module.exports = {
 			});
 		}
 	},
+	editUser: async function (req, res) {
+		try {
+			const formData = {
+				name: req.body.name,
 
+			};
+			const result = await RAR.App.Services.User.SrvList.editUser(formData, req.params.id);
+			if (result.statusCode === 200) {
+				res.send({ statusCode: 200, message: result.message, result: null, token: null });
+			} else {
+				res.send({ statusCode: 400, message: result.message, result: null });
+			}
+		} catch (error) {
+			console.error("Error while updating User: " + error.message);
+			res.send({
+				statusCode: 400,
+				message: "Error while updating User",
+				result: null
+			});
+		}
+	},
 	adminCreate: async function (req, res) {
 		const { loginId, password, username, email } = req.body;
 		try {

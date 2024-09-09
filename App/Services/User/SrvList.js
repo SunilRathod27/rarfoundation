@@ -4,6 +4,8 @@ const RAR = require('../../../common/Foundation'); // Adjust the path and import
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const { Op } = require('sequelize'); // Import Op for Sequelize operators
+
 const { v4: uuidv4 } = require('uuid');
 module.exports = {
 	// submitForm: async function (formData) {
@@ -219,6 +221,41 @@ module.exports = {
 			};
 		}
 	},
+	// Simplified editUser function
+	editUser: async function (formData, userId) {
+		try {
+			const user = await RAR.User.findByPk(userId);
+			if (!user) {
+				return { statusCode: 404, message: 'User not found.', result: null };
+			}
+
+			// Update user with new name
+			const updatedUser = await user.update({ name: formData.name });
+
+			if (updatedUser) {
+				return {
+					statusCode: 200,
+					message: 'User successfully updated.',
+					result: updatedUser
+				};
+			} else {
+				return {
+					statusCode: 400,
+					message: 'Failed to update user. Please try again.',
+					result: null
+				};
+			}
+		} catch (error) {
+			console.error("Error in updating user: " + error.message);
+			return {
+				statusCode: 500,
+				message: 'Error in updating user. Please try again.',
+				result: null
+			};
+		}
+	},
+
+
 	editDocuments: async function (id, data) {
 		try {
 			let [affectedRows] = await RAR.User.update(data, { where: { id } });
