@@ -17,6 +17,18 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: false, // Requires a full name
 			},
+			email: {
+				type: Sequelize.STRING,
+				unique: true,
+				allowNull: false,
+				validate: {
+					isEmail: true
+				}
+			},
+			whatsapp: {
+				type: Sequelize.STRING,
+				allowNull: false
+			},
 			inquiry_type: {
 				type: Sequelize.STRING,
 				defaultValue: 'CardInquiry',

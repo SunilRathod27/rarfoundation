@@ -29,10 +29,20 @@ module.exports = {
 	},
 	editUser: async function (req, res) {
 		try {
-			const formData = {
-				name: req.body.name,
+			const formData = {};
 
-			};
+			if (req.body.name) {
+				formData.name = req.body.name;
+			}
+
+			if (req.body.surname) {
+				formData.surname = req.body.surname;
+			}
+
+			if (req.body.fathername) {
+				formData.fathername = req.body.fathername;
+			}
+
 			const result = await RAR.App.Services.User.SrvList.editUser(formData, req.params.id);
 			if (result.statusCode === 200) {
 				res.send({ statusCode: 200, message: result.message, result: null, token: null });
@@ -119,7 +129,7 @@ module.exports = {
 			<p>Your One-Time Password (OTP) is <strong>${otp}</strong>.</p>
 			<p>This OTP is valid for the next 1 minute.</p>
 			<p>Best Regards,<br>
-			<strong>RaR Foundation Bharat</strong><br>
+			<strong>RAR Foundation Bharat</strong><br>
 			<a href="http://www.rarfoundationbharat.com" style="color: #1a73e8; text-decoration: none;">www.rarfoundationbharat.com</a></p>`
 			};
 
@@ -257,9 +267,9 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Registration Id', 'Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
+				['Registration Id', 'Surname', 'Name', 'Father Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.registrationId, user.name, user.email, user.whatsapp, user.designation,
+					user.registrationId, user.surname, user.name, user.fathername, user.email, user.whatsapp, user.designation,
 					user.stateId, user.districtId, user.address,
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
@@ -296,9 +306,9 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Activation Id', 'Name', 'SurName', 'District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Photo', 'ID Proof'],
+				['Activation Id', 'Surname', 'Name', 'Father Name', 'District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.activationId, user.name, user.surname, user.districtId, user.whatsapp, user.bloodGroupId, user.email,
+					user.activationId, user.surname, user.name, user.fathername, user.districtId, user.whatsapp, user.bloodGroupId, user.email,
 					user.designation, user.stateId, user.address,
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''

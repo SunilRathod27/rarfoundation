@@ -17,6 +17,20 @@ RAR.InquiriesSchema = {
 		type: RAR.DataTypes.STRING,
 		allowNull: false, // Requires a full name
 	},
+	email: {
+		type: RAR.DataTypes.STRING,
+		allowNull: true, // Allows null if no email is provided
+		validate: {
+			isEmail: true, // Validates the format of the email
+		}
+	},
+	whatsapp: {
+		type: RAR.DataTypes.STRING,
+		allowNull: true, // Allows null if no WhatsApp number is provided
+		validate: {
+			isNumeric: true, // Ensures the WhatsApp number contains only numbers
+		}
+	},
 	inquiry_type: {
 		type: RAR.DataTypes.STRING,
 		defaultValue: 'CardInquiry',
