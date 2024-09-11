@@ -9,6 +9,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 module.exports = {
 	submitForm: async function (req, res) {
 		try {
@@ -42,8 +43,14 @@ module.exports = {
 			if (req.body.fathername) {
 				formData.fathername = req.body.fathername;
 			}
+			if (req.body.birthday) {
+				formData.birthday = req.body.birthday
+			}
+
 
 			const result = await RAR.App.Services.User.SrvList.editUser(formData, req.params.id);
+
+
 			if (result.statusCode === 200) {
 				res.send({ statusCode: 200, message: result.message, result: null, token: null });
 			} else {
@@ -208,11 +215,12 @@ module.exports = {
 			if (designation) filterCriteria.designation = { [Sequelize.Op.like]: `%${designation}%` };
 
 			const total = await RAR.User.count({ where: filterCriteria });
-			const users = await RAR.User.findAll({
+			let users = await RAR.User.findAll({
 				where: filterCriteria,
 				offset: (pageNum - 1) * limitNum,
 				limit: limitNum
 			});
+
 			res.send({ statusCode: 200, total, page: pageNum, limit: limitNum, users });
 		} catch (error) {
 			console.error('Error fetching inactive users:', error);
@@ -238,11 +246,13 @@ module.exports = {
 			if (designation) filterCriteria.designation = { [Sequelize.Op.like]: `%${designation}%` };
 
 			const total = await RAR.User.count({ where: filterCriteria });
-			const users = await RAR.User.findAll({
+			let users = await RAR.User.findAll({
 				where: filterCriteria,
 				offset: (pageNum - 1) * limitNum,
-				limit: limitNum
+				limit: limitNum,
+				order: [['activationId', 'ASC']]
 			});
+
 			res.send({ statusCode: 200, total, page: pageNum, limit: limitNum, users });
 		} catch (error) {
 			console.error('Error fetching active users:', error);
@@ -267,10 +277,11 @@ module.exports = {
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Registration Id', 'Surname', 'Name', 'Father Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Photo', 'ID Proof'],
+				['Registration Id', 'Surname', 'Name', 'Father Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Birthday', 'Photo', 'ID Proof'],
 				...users.map(user => [
 					user.registrationId, user.surname, user.name, user.fathername, user.email, user.whatsapp, user.designation,
 					user.stateId, user.districtId, user.address,
+					user.birthday ? moment(user.birthday).format('DD/MM/YYYY') : '',
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
 				])
@@ -304,26 +315,18 @@ module.exports = {
 			if (districtId) filterCriteria.districtId = districtId;
 			if (designation) filterCriteria.designation = { [Sequelize.Op.iLike]: `%${designation}%` };
 
-			const users = await RAR.User.findAll({ where: filterCriteria });
+			const users = await RAR.User.findAll({ where: filterCriteria, order: [['activationId', 'ASC']] });
 			const fileData = [
-				['Activation Id', 'Surname', 'Name', 'Father Name', 'District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Photo', 'ID Proof'],
+				['Activation Id', 'Surname', 'Name', 'Father Name', 'District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Birthday', 'Photo', 'ID Proof'],
 				...users.map(user => [
 					user.activationId, user.surname, user.name, user.fathername, user.districtId, user.whatsapp, user.bloodGroupId, user.email,
 					user.designation, user.stateId, user.address,
+					user.birthday ? moment(user.birthday).format('DD/MM/YYYY') : '',
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
 				])
 			];
-			// const fileData = [
-			// 	['Activation Id', 'Name', 'SurName', 'District', 'Whatsapp No.',''],
-			// 	...users.map(user => [
-			// 		user.activationId, user.name, user.surname, user.districtId, user.birthday, user.whatsapp, user.email,
 
-
-			// 	])
-			// ];
-			// user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
-			// user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
 			const fileName = 'active_users_export.xlsx';
 			let ws = RAR.Xlsx.utils.aoa_to_sheet(fileData);
 			let wb = RAR.Xlsx.utils.book_new();

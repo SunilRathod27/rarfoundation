@@ -221,16 +221,25 @@ module.exports = {
 			};
 		}
 	},
-	// Simplified editUser function
+
 	editUser: async function (formData, userId) {
 		try {
+
 			const user = await RAR.User.findByPk(userId);
 			if (!user) {
 				return { statusCode: 404, message: 'User not found.', result: null };
 			}
 
-			// Update user with new name
-			const updatedUser = await user.update({ name: formData.name });
+
+			const updateFields = {};
+
+
+			if (formData.name) updateFields.name = formData.name;
+			if (formData.surname) updateFields.surname = formData.surname;
+			if (formData.fathername) updateFields.fathername = formData.fathername;
+			if (formData.birthday) updateFields.birthday = formData.birthday;
+
+			const updatedUser = await user.update(updateFields);
 
 			if (updatedUser) {
 				return {
@@ -254,6 +263,7 @@ module.exports = {
 			};
 		}
 	},
+
 
 
 	editDocuments: async function (id, data) {
