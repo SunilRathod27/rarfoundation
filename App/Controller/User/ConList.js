@@ -203,7 +203,7 @@ module.exports = {
 			const pageNum = parseInt(page, 10);
 			const limitNum = parseInt(limit, 10);
 
-			const filterCriteria = { status: 'inactive', activationId: '' };
+			const filterCriteria = { status: 'inactive' };
 			if (filter) {
 				filterCriteria[Sequelize.Op.or] = [
 					{ name: { [Sequelize.Op.like]: `%${filter}%` } },
@@ -250,7 +250,7 @@ module.exports = {
 				where: filterCriteria,
 				offset: (pageNum - 1) * limitNum,
 				limit: limitNum,
-				order: [['activationId', 'ASC']]
+				order: [['activationId', 'DESC']]
 			});
 
 			res.send({ statusCode: 200, total, page: pageNum, limit: limitNum, users });
