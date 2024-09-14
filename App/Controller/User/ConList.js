@@ -361,32 +361,39 @@ module.exports = {
 	},
 	activateUser: async function (req, res) {
 		try {
-			const { userId, generateActivationId } = req.body;
+			const { userId, generateActivationId, rejectUser } = req.body;
 
-			if (!generateActivationId) {
-				return res.status(400).json({ message: 'Activation ID generation not requested.' });
-			}
-
+			// Check if user is not found
 			const user = await RAR.User.findByPk(userId);
-
-
 			if (!user) {
 				return res.status(404).json({ message: 'User not found.' });
 			}
 
+			// Handle user rejection
+			if (rejectUser) {
+				await user.update({ status: 'rejected' }); // Update user status to rejected
+				return res.status(200).json({ message: 'User has been rejected.' });
+			}
+
+			// If activation is not requested, return an error
+			if (!generateActivationId) {
+				return res.status(400).json({ message: 'Activation ID generation not requested.' });
+			}
+
+			// Activation logic
 			const getRandPort = async function () {
 				let min = 6000;
 				let max = 55555;
 				return Math.floor(Math.random() * (max - min + 1) + min);
 			};
+
 			let randPort = await getRandPort();
 			const generator = new Sequential.Generator({
 				digits: 1,
 				letters: 0,
-				store: function (key, id) {
-				},
+				store: function (key, id) { },
 				restore: "10000",
-				port: randPort // Using the generated random port
+				port: randPort, // Using the generated random port
 			});
 
 			generator.start();
@@ -398,32 +405,32 @@ module.exports = {
 				const generatedId = generator.generate().toString();
 				newActivationId = `RAR/${generatedId.trim()}`;
 
+				// Ensure generated Activation ID is unique
 				const existingUser = await RAR.User.findOne({ where: { activationId: newActivationId } });
 				if (!existingUser) {
 					unique = true;
 				}
 			}
 
+			// Update the user with the new activation ID and active status
 			await user.update({ status: 'active', activationId: newActivationId });
-			let obj = {
+
+			res.status(200).json({
 				statusCode: 200,
 				message: `User activated successfully. Activation ID: ${newActivationId}`,
-				result: newActivationId
-			}
-
-			res.send(obj);
+				result: newActivationId,
+			});
 
 		} catch (error) {
-			console.error('Error activating user:', error);
-			let obj = {
+			console.error('Error activating/rejecting user:', error);
+			res.status(500).json({
 				statusCode: 500,
 				message: 'Server error',
-				result: null
-			}
-
-			res.send(obj);
+				result: null,
+			});
 		}
 	},
+
 
 	updateDocuments: async function (req, res) {
 		try {
