@@ -46,6 +46,10 @@ RAR.UserSchema = {
 		type: RAR.DataTypes.STRING,
 		allowNull: false
 	},
+	subDistrictId: {  // Changed to STRING
+		type: RAR.DataTypes.STRING,
+		allowNull: false
+	},
 	whatsapp: {
 		type: RAR.DataTypes.STRING,
 		allowNull: false

@@ -5,7 +5,7 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const { Op } = require('sequelize'); // Import Op for Sequelize operators
-
+const Sequential = require('sequential-ids');
 const { v4: uuidv4 } = require('uuid');
 module.exports = {
 	// submitForm: async function (formData) {
@@ -187,6 +187,7 @@ module.exports = {
 				address: formData.address,
 				stateId: formData.state,
 				districtId: formData.district,
+				subDistrictId: formData.subDistrict,
 				whatsapp: formData.whatsapp,
 				idProof: idProofFilePath,
 				photo: photoFilePath,
@@ -293,19 +294,36 @@ module.exports = {
 		}
 	},
 	generateUniqueRegistrationId: async function () {
-		let isUnique = false;
-		let registrationId;
+		const getRandPort = async function () {
+			let min = 6000;
+			let max = 55555;
+			return Math.floor(Math.random() * (max - min + 1) + min);
+		};
+		let randPort = await getRandPort();
 
-		while (!isUnique) {
-			// Generate a 4-digit number
-			registrationId = Math.floor(1000 + Math.random() * 9000).toString();
+		const generator = new Sequential.Generator({
+			digits: 1,
+			letters: 0,
+			store: function (key, id) { },
+			restore: "10000",
+			port: randPort,
+		});
 
-			// Check if the registration ID already exists in the database
-			const existingUser = await RAR.User.findOne({ where: { registrationId } });
+		generator.start();
 
-			if (!existingUser) {
-				isUnique = true;
-			}
+		let generatedId = generator.generate().toString().trim();
+		let registrationId = `REG/${generatedId}`;
+
+		let existingUser = await RAR.User.findOne({ where: { registrationId } });
+
+		while (existingUser) {
+			randPort = await getRandPort();
+			generator.port = randPort;
+			generator.start();
+
+			generatedId = generator.generate().toString().trim();
+			registrationId = `REG/${generatedId}`;
+			existingUser = await RAR.User.findOne({ where: { registrationId } });
 		}
 
 		return registrationId;

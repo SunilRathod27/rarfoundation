@@ -13,6 +13,7 @@ try {
 	RAR.Router.put('/api/Users/update-documents/:id', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.updateDocuments);
 
 	RAR.Router.get('/api/Users/inactive-export', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.exportInactiveUsers);
+	RAR.Router.post('/api/Users/import-users', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.importUsers);
 	RAR.Router.get('/api/Users/active-export', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.exportActiveUsers);
 	RAR.Router.post('/api/User/admin-logout', RAR.App.Controller.User.ConList.adminLogout);
 	RAR.Router.post('/api/User/activate-user', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activateUser);

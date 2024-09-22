@@ -54,6 +54,10 @@ module.exports = {
 				type: Sequelize.STRING, // Changed from INTEGER to STRING
 				allowNull: false
 			},
+			subDistrictId: {
+				type: Sequelize.STRING, // Changed from INTEGER to STRING
+				allowNull: false
+			},
 			whatsapp: {
 				type: Sequelize.STRING,
 				allowNull: false

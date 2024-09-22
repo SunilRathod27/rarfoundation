@@ -199,7 +199,7 @@ module.exports = {
 
 	inactiveUser: async function (req, res) {
 		try {
-			const { page = 1, limit = 10, filter = '', stateId = '', districtId = '', designation = '' } = req.query;
+			const { page = 1, limit = 10, filter = '', stateId = '', districtId = '', subDistrictId = '', designation = '' } = req.query;
 			const pageNum = parseInt(page, 10);
 			const limitNum = parseInt(limit, 10);
 
@@ -212,6 +212,7 @@ module.exports = {
 			}
 			if (stateId) filterCriteria.stateId = stateId;
 			if (districtId) filterCriteria.districtId = districtId;
+			if (subDistrictId) filterCriteria.subDistrictId = subDistrictId;
 			if (designation) filterCriteria.designation = { [Sequelize.Op.like]: `%${designation}%` };
 
 			const total = await RAR.User.count({ where: filterCriteria });
@@ -230,7 +231,7 @@ module.exports = {
 
 	activeUser: async function (req, res) {
 		try {
-			const { page = 1, limit = 10, filter = '', stateId = '', districtId = '', designation = '' } = req.query;
+			const { page = 1, limit = 10, filter = '', stateId = '', districtId = '', subDistrictId = '', designation = '' } = req.query;
 			const pageNum = parseInt(page, 10);
 			const limitNum = parseInt(limit, 10);
 
@@ -243,6 +244,7 @@ module.exports = {
 			}
 			if (stateId) filterCriteria.stateId = stateId;
 			if (districtId) filterCriteria.districtId = districtId;
+			if (subDistrictId) filterCriteria.subDistrictId = subDistrictId;
 			if (designation) filterCriteria.designation = { [Sequelize.Op.like]: `%${designation}%` };
 
 			const total = await RAR.User.count({ where: filterCriteria });
@@ -262,7 +264,7 @@ module.exports = {
 
 	exportInactiveUsers: async function (req, res) {
 		try {
-			const { filter = '', stateId = '', districtId = '', designation = '' } = req.query;
+			const { filter = '', stateId = '', districtId = '', subDistrictId = '', designation = '' } = req.query;
 			const filterCriteria = { status: 'inactive', activationId: '' };
 
 			if (filter) {
@@ -273,14 +275,15 @@ module.exports = {
 			}
 			if (stateId) filterCriteria.stateId = stateId;
 			if (districtId) filterCriteria.districtId = districtId;
+			if (subDistrictId) filterCriteria.subDistrictId = subDistrictId;
 			if (designation) filterCriteria.designation = { [Sequelize.Op.like]: `%${designation}%` };
 
 			const users = await RAR.User.findAll({ where: filterCriteria });
 			const fileData = [
-				['Registration Id', 'Surname', 'Name', 'Father Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Address', 'Birthday', 'Photo', 'ID Proof'],
+				['Registration Id', 'Surname', 'Name', 'Father Name', 'Email', 'Whatsapp No.', 'Designation', 'State', 'District', 'Sub District', 'Address', 'Birthday', 'Photo', 'ID Proof'],
 				...users.map(user => [
 					user.registrationId, user.surname, user.name, user.fathername, user.email, user.whatsapp, user.designation,
-					user.stateId, user.districtId, user.address,
+					user.stateId, user.districtId, user.subDistrictId, user.address,
 					user.birthday ? moment(user.birthday).format('DD/MM/YYYY') : '',
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
 					user.idProof ? `${process.env.RAR_SERVER_URL}/uploads/${user.idProof}` : ''
@@ -302,7 +305,7 @@ module.exports = {
 
 	exportActiveUsers: async function (req, res) {
 		try {
-			const { filter = '', stateId = '', districtId = '', designation = '' } = req.query;
+			const { filter = '', stateId = '', districtId = '', subDistrictId = '', designation = '' } = req.query;
 			const filterCriteria = { status: 'active' };
 
 			if (filter) {
@@ -313,13 +316,14 @@ module.exports = {
 			}
 			if (stateId) filterCriteria.stateId = stateId;
 			if (districtId) filterCriteria.districtId = districtId;
+			if (subDistrictId) filterCriteria.subDistrictId = subDistrictId;
 			if (designation) filterCriteria.designation = { [Sequelize.Op.iLike]: `%${designation}%` };
 
 			const users = await RAR.User.findAll({ where: filterCriteria, order: [['activationId', 'ASC']] });
 			const fileData = [
-				['Activation Id', 'Surname', 'Name', 'Father Name', 'District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Birthday', 'Photo', 'ID Proof'],
+				['Activation Id', 'Surname', 'Name', 'Father Name', 'District', 'Sub District', 'Whatsapp No.', 'Blood Group', 'Email', 'Designation', 'State', 'Address', 'Birthday', 'Photo', 'ID Proof'],
 				...users.map(user => [
-					user.activationId, user.surname, user.name, user.fathername, user.districtId, user.whatsapp, user.bloodGroupId, user.email,
+					user.activationId, user.surname, user.name, user.fathername, user.districtId, user.subDistrictId, user.whatsapp, user.bloodGroupId, user.email,
 					user.designation, user.stateId, user.address,
 					user.birthday ? moment(user.birthday).format('DD/MM/YYYY') : '',
 					user.photo ? `${process.env.RAR_SERVER_URL}/uploads/${user.photo}` : '',
@@ -499,7 +503,10 @@ module.exports = {
 			const totalUsers = await RAR.User.count();
 			const totalStates = await RAR.User.count({ distinct: true, col: 'stateId' });
 			const totalDistricts = await RAR.User.count({ distinct: true, col: 'districtId' });
+			const totalSubDistricts = await RAR.User.count({ distinct: true, col: 'subDistrictId' });
 			const totalJoined = await RAR.User.count({ where: { status: 'active' } });
+			const totalInquiries = await RAR.Inquiries.count({});
+			const totalhelpRequests = await RAR.Help.count({});
 			const activeUsers = await RAR.User.count({ where: { status: 'active' } });
 			const deactivatedUsers = await RAR.User.count({ where: { status: 'inactive' } });
 
@@ -515,6 +522,16 @@ module.exports = {
 				raw: true,
 			});
 
+			const subDistrictDistribution = await RAR.User.findAll({
+				attributes: [
+					'subDistrictId',
+					[Sequelize.fn('COUNT', Sequelize.col('subDistrictId')), 'count']
+				],
+				group: ['subDistrictId'],
+				raw: true,
+				having: Sequelize.where(Sequelize.col('subDistrictId'), '!=', '')
+			});
+
 			// Formatting the distribution results into objects
 			const formattedStateDistribution = Object.fromEntries(
 				stateDistribution.map(item => [item.stateId, item.count])
@@ -524,6 +541,11 @@ module.exports = {
 				districtDistribution.map(item => [item.districtId, item.count])
 			);
 
+			const formattedSubDistrictDistribution = Object.fromEntries(
+				subDistrictDistribution.map(item => [item.subDistrictId, item.count])
+			);
+
+
 			// Returning the statistics in the response
 			return res.send({
 				statusCode: 200,
@@ -531,11 +553,15 @@ module.exports = {
 				totalUsers,
 				totalStates,
 				totalDistricts,
+				totalSubDistricts,
 				totalJoined,
+				totalInquiries,
+				totalhelpRequests,
 				activeUsers,
 				deactivatedUsers,
 				stateDistribution: formattedStateDistribution,
 				districtDistribution: formattedDistrictDistribution,
+				subDistrictDistribution: formattedSubDistrictDistribution
 			});
 		} catch (error) {
 			console.error("Error while getting Statistics: " + error.message);
@@ -547,7 +573,144 @@ module.exports = {
 				result: null
 			});
 		}
+	},
+	writeBulkUploadResponceFile: async function (csvFileData, fileName) {
+		console.log("csvFileData", csvFileData);
+		console.log("fileName", fileName);
+
+		return new Promise(async function (resolve, reject) {
+			try {
+				let fileData = [];
+
+				// Create headers for the file
+				let headers = ['Status', 'Row Data', 'Error Message'];
+				fileData.push(headers);
+
+				// Process success data
+				csvFileData.success.forEach(row => {
+					let rowData = Object.values(row);
+					rowData.unshift('Success');
+					fileData.push(rowData);
+				});
+
+				// Process failure data
+				csvFileData.failure.forEach(item => {
+					let rowData = Object.values(item.row);
+					rowData.unshift('Fail');
+					rowData.push(item.error); // Add error message
+					fileData.push(rowData);
+				});
+
+				let ws = RAR.Xlsx.utils.aoa_to_sheet(fileData);
+				let wb = RAR.Xlsx.utils.book_new();
+				RAR.Xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
+				RAR.Xlsx.writeFile(wb, fileName);
+
+				let obj = {
+					statusCode: 200,
+					status: 'success',
+					message: 'File created successfully',
+					result: fileName
+				};
+				resolve(obj);
+
+			} catch (error) {
+				console.log("Error while creating file on server!!", error);
+				let obj = {
+					statusCode: 400,
+					status: 'fail',
+					messageCode: `Error while creating file on server: ${error.message}`,
+					result: null
+				};
+				resolve(obj);
+			}
+		});
+	},
+	importUsers: async function (req, res) {
+		if (!req.files || !req.files.file) {
+			return res.status(400).json({ message: 'No file uploaded' });
+		}
+
+		const file = req.files.file;
+		// const fileName = path.join(__dirname, file.name); // Save the file temporarily
+		const fileName = path.join(__dirname, '../../../public/', file.name);
+		// Save the uploaded file to the server
+		fs.writeFileSync(fileName, file.data);
+
+		try {
+			// Parse the Excel file
+			let workbook = RAR.Xlsx.readFile(fileName);
+			let workbookSheet = workbook.SheetNames;
+			let excelDataArray = RAR.Xlsx.utils.sheet_to_json(workbook.Sheets[workbookSheet[0]]);
+
+			const results = {
+				success: [],
+				failure: []
+			};
+
+			for (let row of excelDataArray) {
+				try {
+					// Insert data into the database
+					const user = await RAR.User.create({
+						registrationId: row.registrationId || '',
+						activationId: row.activationId || null,
+						name: row.name,
+						fathername: row.fathername,
+						surname: row.surname,
+						email: row.email,
+						birthday: row.birthday,
+						address: row.address,
+						stateId: row.stateId,
+						districtId: row.districtId,
+						subDistrictId: row.subDistrictId,
+						whatsapp: row.whatsapp,
+						idProof: row.idProof,
+						photo: row.photo,
+						bloodGroupId: row.bloodGroupId,
+						designation: row.designation,
+						status: row.status || 'inactive',
+					});
+
+					// Add success result
+					results.success.push({ row: user });
+				} catch (error) {
+					// Add failure result
+					results.failure.push({ row: row, error: error.message });
+				}
+			}
+
+			// Generate response file
+			const responseFileName = `upload_results_${Date.now()}.xlsx`;
+			const responseFilePath = path.join(__dirname, responseFileName);
+
+			const responseFileResult = await RAR.App.Controller.User.ConList.writeBulkUploadResponceFile(results, responseFilePath);
+			if (responseFileResult.status === 'success') {
+				// Send the file to the client
+				res.download(responseFilePath, responseFileName, (err) => {
+					if (err) {
+						res.status(500).json({ message: 'Error sending file' });
+					}
+					// Delete the file after sending it
+					fs.unlink(fileName, (err) => {
+						if (err) {
+							console.error('Error deleting uploaded file:', err);
+						}
+					});
+					fs.unlink(responseFilePath, (err) => {
+						if (err) {
+							console.error('Error deleting response file:', err);
+						}
+					});
+				});
+			} else {
+				res.status(responseFileResult.statusCode).json({ message: responseFileResult.messageCode });
+			}
+		} catch (error) {
+			console.error('Error processing file:', error);
+			res.status(500).json({ message: 'Error processing file' });
+		}
 	}
+
 
 
 }
