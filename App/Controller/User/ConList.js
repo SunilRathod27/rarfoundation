@@ -207,7 +207,9 @@ module.exports = {
 			if (filter) {
 				filterCriteria[Sequelize.Op.or] = [
 					{ name: { [Sequelize.Op.like]: `%${filter}%` } },
-					{ email: { [Sequelize.Op.like]: `%${filter}%` } }
+					{ email: { [Sequelize.Op.like]: `%${filter}%` } },
+					{ registrationId: { [Sequelize.Op.like]: `%${filter}%` } },
+					{ whatsapp: { [Sequelize.Op.like]: `%${filter}%` } }
 				];
 			}
 			if (stateId) filterCriteria.stateId = stateId;
@@ -238,7 +240,9 @@ module.exports = {
 			if (filter) {
 				filterCriteria[Sequelize.Op.or] = [
 					{ name: { [Sequelize.Op.like]: `%${filter}%` } },
-					{ email: { [Sequelize.Op.like]: `%${filter}%` } }
+					{ email: { [Sequelize.Op.like]: `%${filter}%` } },
+					{ activationId: { [Sequelize.Op.like]: `%${filter}%` } },
+					{ whatsapp: { [Sequelize.Op.like]: `%${filter}%` } }
 				];
 			}
 			if (stateId) filterCriteria.stateId = stateId;
