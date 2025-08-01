@@ -1,0 +1,22 @@
+# dependencies
+node_modules
+
+
+# Folder
+#public
+build
+csv
+
+# exclude everything
+build/*
+public/*
+
+
+# Files
+package-lock.json
+yarn.lock
+# Environment File
+.env
+devcontainer.json
+docker-compose.yml
+Dockerfile

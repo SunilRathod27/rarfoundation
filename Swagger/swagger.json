@@ -1,0 +1,1850 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Foundation API"
+    },
+    "schemes": [
+        "https",
+        "http"
+    ],
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "name": "authorization",
+            "in": "header",
+            "description": "Authentication token"
+        }
+    },
+    "paths": {
+        "/user/signup": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Signup User",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Basic details of user",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "default": "admin@email.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "default": "1234"
+                                },
+                                "firstname": {
+                                    "type": "string",
+                                    "default": "nirav"
+                                },
+                                "lastname": {
+                                    "type": "string",
+                                    "default": "patel"
+                                },
+                                "isAdmin": {
+                                    "type": "Boolean",
+                                    "default": false
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "default": "9089765435"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Login User",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Credential details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "default": "admin@email.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "default": "1234"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful"
+                    },
+                    "400": {
+                        "description": "Login Failed"
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update Profile",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated profile details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "firstname": {
+                                    "type": "string",
+                                    "default": "nirav"
+                                },
+                                "lastname": {
+                                    "type": "string",
+                                    "default": "patel"
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "default": "9089765435"
+                                },
+                                "preferredCity": {
+                                    "type": "string",
+                                    "default": "ahmedabad"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/user/password": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Change Password",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Object including current password and new password",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "currentPassword": {
+                                    "type": "string",
+                                    "default": "1234"
+                                },
+                                "newPassword": {
+                                    "type": "string",
+                                    "default": "Nirav@123"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/user/address/{addressId}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Change Address",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "addressId",
+                        "in": "path",
+                        "description": "addressId that needs to be edited",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated address object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "isDefault": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "default": "address 1"
+                                },
+                                "addressLine1": {
+                                    "type": "string",
+                                    "default": "add line 1"
+                                },
+                                "addressLine2": {
+                                    "type": "string",
+                                    "default": "add line 2"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "default": "Ahmedabad"
+                                },
+                                "state": {
+                                    "type": "string",
+                                    "default": "guj"
+                                },
+                                "pincode": {
+                                    "type": "string",
+                                    "default": "382330"
+                                },
+                                "landmark": {
+                                    "type": "string",
+                                    "default": "shalby hospital"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/user/address": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Add Address",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Address details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "isDefault": {
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "default": "address 1"
+                                },
+                                "addressLine1": {
+                                    "type": "string",
+                                    "default": "add line 1"
+                                },
+                                "addressLine2": {
+                                    "type": "string",
+                                    "default": "add line 2"
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "default": "Ahmedabad"
+                                },
+                                "state": {
+                                    "type": "string",
+                                    "default": "guj"
+                                },
+                                "pincode": {
+                                    "type": "string",
+                                    "default": "382330"
+                                },
+                                "landmark": {
+                                    "type": "string",
+                                    "default": "shalby hospital"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/brands": {
+            "get": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Get all the Brand List",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful"
+                    },
+                    "400": {
+                        "description": "Failed"
+                    }
+                }
+            }
+        },
+        "/admin/brand": {
+            "post": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Create Brand",
+                "description": "Brand details object",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Brand object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "default": "brand1"
+                                },
+                                "logo": {
+                                    "type": "string",
+                                    "default": "/public/logo1.png"
+                                },
+                                "isArchived": {
+                                    "type": "Boolean",
+                                    "default": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful"
+                    },
+                    "400": {
+                        "description": "Failed"
+                    }
+                }
+            }
+        },
+        "/admin/brand/{id}": {
+            "put": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Edit Existing Brand",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Brand id that needs to be edited",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated brand details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "default": "brand1"
+                                },
+                                "logo": {
+                                    "type": "string",
+                                    "default": "/public/logo1.png"
+                                },
+                                "isArchived": {
+                                    "type": "Boolean",
+                                    "default": false
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/brand/{id}/delete": {
+            "delete": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Delete Exsisting Brand",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Brand id that needs to be Deleted",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/category": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Get all the Category",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "startFrom",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "displayRecord",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/category/create": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Create New Category",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Category details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "parent": {
+                                    "type": "string",
+                                    "default": "parent"
+                                },
+                                "icon": {
+                                    "type": "string",
+                                    "default": "icon.jpg"
+                                },
+                                "child": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "default": [
+                                        "a",
+                                        "b"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/category/{id}": {
+            "put": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Publish Category",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category id that need to be edited",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated category object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "isPublished": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/coupon": {
+            "get": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "Get all the Coupon List",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "startFrom",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "displayRecord",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/coupon/create": {
+            "post": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "Create New Coupon",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Coupon details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "banner": {
+                                    "type": "string",
+                                    "default": "banner.jpg"
+                                },
+                                "campaignName": {
+                                    "type": "string",
+                                    "default": "Campaignname"
+                                },
+                                "ValidFrom": {
+                                    "type": "Date",
+                                    "default": "8/16/2022"
+                                },
+                                "validTill": {
+                                    "type": "Date",
+                                    "default": "9/6/2022"
+                                },
+                                "code": {
+                                    "type": "string",
+                                    "default": "CAMPCODE001"
+                                },
+                                "discount": {
+                                    "type": "number",
+                                    "default": 10
+                                },
+                                "minimumEligibleAmount": {
+                                    "type": "number",
+                                    "default": 100
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/coupon/{id}/edit": {
+            "put": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "Edit Exsising Coupon",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Coupon id ",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Upadated coupon object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "banner": {
+                                    "type": "string",
+                                    "default": "banner.jpg"
+                                },
+                                "campaignName": {
+                                    "type": "string",
+                                    "default": "Campaignname"
+                                },
+                                "ValidFrom": {
+                                    "type": "Date",
+                                    "default": "8/16/2022"
+                                },
+                                "validTill": {
+                                    "type": "Date",
+                                    "default": "9/6/2022"
+                                },
+                                "code": {
+                                    "type": "string",
+                                    "default": "CAMPCODE001"
+                                },
+                                "discount": {
+                                    "type": "number",
+                                    "default": 10
+                                },
+                                "minimumEligibleAmount": {
+                                    "type": "number",
+                                    "default": 100
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/coupon/{id}/publish": {
+            "put": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "Change Coupon Status",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Coupon id ",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Coupon status details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "isPublished": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/coupon/{id}/disable": {
+            "put": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "End Offer Of Selected Coupon",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Coupon id that need to be upadated",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get all the Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "startFrom",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "displayRecord",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "type": "string",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product/create": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Product details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "default": "product"
+                                },
+                                "category": {
+                                    "type": "string",
+                                    "default": "62ee497efaa5a715eed6912b"
+                                },
+                                "brand": {
+                                    "type": "string",
+                                    "default": "62ee4c0621b4d902d15e64f5"
+                                },
+                                "sku": {
+                                    "type": "string",
+                                    "default": "2022-08-07T11:16:08.539+00:00"
+                                },
+                                "price": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "depositePrice": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "discount": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "stock": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "default": "In Stock"
+                                },
+                                "isPublished": {
+                                    "type": "boolean"
+                                },
+                                "images": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "default": "dss"
+                                    }
+                                },
+                                "shortDesc": {
+                                    "type": "string",
+                                    "default": "eeee"
+                                },
+                                "fullDesc": {
+                                    "type": "string",
+                                    "default": "awsdf"
+                                },
+                                "availableColors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "default": "esdfgh"
+                                    }
+                                },
+                                "isArchived": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get Single Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "task id ",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product/{id}/edit": {
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "task id ",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Upadated product detils object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "default": "product"
+                                },
+                                "category": {
+                                    "type": "string",
+                                    "default": "62ee497efaa5a715eed6912b"
+                                },
+                                "brand": {
+                                    "type": "string",
+                                    "default": "62ee4c0621b4d902d15e64f5"
+                                },
+                                "sku": {
+                                    "type": "string",
+                                    "default": "2022-08-07T11:16:08.539+00:00"
+                                },
+                                "price": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "depositePrice": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "discount": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "stock": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "default": "In Stock"
+                                },
+                                "isPublished": {
+                                    "type": "boolean"
+                                },
+                                "images": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "default": "dss"
+                                    }
+                                },
+                                "shortDesc": {
+                                    "type": "string",
+                                    "default": "eeee"
+                                },
+                                "fullDesc": {
+                                    "type": "string",
+                                    "default": "awsdf"
+                                },
+                                "availableColors": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "default": "esdfgh"
+                                    }
+                                },
+                                "isArchived": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product/{id}/publish": {
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Publis/Unpublish Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "task id ",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "isPublished": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/admin/product/upload": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Upload Product Using CSV",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "fileData",
+                        "in": "formData",
+                        "description": "The uploaded file data",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}/review": {
+            "get": {
+                "tags": [
+                    "Products Review"
+                ],
+                "summary": "Get Product Review",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "number",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}/review/add": {
+            "put": {
+                "tags": [
+                    "Products Review"
+                ],
+                "summary": "Add/Edit Product Review",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Product Review object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "reviewBy": {
+                                    "type": "string",
+                                    "default": "62ef96e9a51d6cb1e5885cd2"
+                                },
+                                "rating": {
+                                    "type": "number",
+                                    "default": 4
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "default": "NICE PRODUCT"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}": {
+            "get": {
+                "tags": [
+                    "Products (Without AdminAuth)"
+                ],
+                "summary": "Get Single Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}/review/recent": {
+            "get": {
+                "tags": [
+                    "Products (Without AdminAuth)"
+                ],
+                "summary": "Get Recent Review Of Product",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/list": {
+            "post": {
+                "tags": [
+                    "Products (Without AdminAuth)"
+                ],
+                "summary": "Get All Product List",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Product details object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "string",
+                                    "default": "62ef96e9a51d6cb1e5885cd2"
+                                },
+                                "search": {
+                                    "type": "string",
+                                    "default": ""
+                                },
+                                "skip": {
+                                    "type": "number",
+                                    "default": 0
+                                },
+                                "limit": {
+                                    "type": "number",
+                                    "default": 10
+                                },
+                                "filter": {
+                                    "type": "object",
+                                    "default": {
+                                        "brand": "",
+                                        "maxPrice": 0,
+                                        "color": "red"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}/review/status": {
+            "get": {
+                "tags": [
+                    "Products (Without AdminAuth)"
+                ],
+                "summary": "Get Review Status",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/product/{productId}/packages": {
+            "get": {
+                "tags": [
+                    "Products (Without AdminAuth)"
+                ],
+                "summary": "Get Product Packages",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "description": "product id",
+                        "required": true,
+                        "type": "string",
+                        "default": "62ef78b291effacb1100431d"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/cart/": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add an item to cart",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Cart detais object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "productId": {
+                                    "type": "string",
+                                    "default": "62fe7767c6c22b75928b5239"
+                                },
+                                "isPackage": {
+                                    "type": "boolean",
+                                    "default": "true"
+                                },
+                                "packageId": {
+                                    "type": "string",
+                                    "default": "62fe7767c6c22b75928b5239"
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "default": "1"
+                                },
+                                "totalDaysRentedFor": {
+                                    "type": "number",
+                                    "default": "1"
+                                },
+                                "selectedColor": {
+                                    "type": "string",
+                                    "default": "black"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/cart/list/": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "list items in cart",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful"
+                    },
+                    "400": {
+                        "description": "Failed"
+                    }
+                }
+            }
+        },
+        "/cart/{id}/": {
+            "put": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update Item In Cart",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Cart id ",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Updated cart object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "productId": {
+                                    "type": "string",
+                                    "default": "62fe7767c6c22b75928b5239"
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "default": "1"
+                                },
+                                "totalDaysRentedFor": {
+                                    "type": "number",
+                                    "default": "1"
+                                },
+                                "selectedColor": {
+                                    "type": "string",
+                                    "default": "blue"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        },
+        "/cart/{id}/{id}/": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove item from Cart",
+                "produces": [
+                    "application/json"
+                ],
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "CartId",
+                        "in": "path",
+                        "description": "Cart id that needs to be Deleted",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ItemId",
+                        "in": "path",
+                        "description": "Item Id that needs to be Deleted",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid status value"
+                    }
+                }
+            }
+        }
+    }
+}
