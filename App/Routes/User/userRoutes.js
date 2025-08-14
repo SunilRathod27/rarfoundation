@@ -1,5 +1,7 @@
 'use strict';
 const RAR = require('../../../common/Foundation');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 try {
 	RAR.Router.post('/api/User/admin-login', RAR.App.Controller.User.ConList.adminLogin);
@@ -16,6 +18,8 @@ try {
 	RAR.Router.get('/api/Users/active-export', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.exportActiveUsers);
 	RAR.Router.post('/api/User/admin-logout', RAR.App.Controller.User.ConList.adminLogout);
 	RAR.Router.post('/api/User/activate-user', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.activateUser);
+	RAR.Router.post('/api/User/import-users', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, upload.single('file'), RAR.App.Controller.User.ConList.importUsers);
+	RAR.Router.get('/api/User/profile', RAR.App.Middlewares.commoMiddleware.ConList.isAdminOrNot, RAR.App.Controller.User.ConList.getUserProfile);
 
 } catch (error) {
 
@@ -23,4 +27,3 @@ try {
 }
 
 module.exports = RAR.Router
-

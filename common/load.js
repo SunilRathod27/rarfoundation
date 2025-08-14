@@ -6,6 +6,8 @@ var Jwt = require('jsonwebtoken');
 var fs = require('fs');
 var path = require("path");
 const express = require('express');
+const http = require('http');
+const { Server } = require("socket.io");
 var bodyParser = require('body-parser');
 var Joi = require('joi');
 var mysql = require('mysql2'); // For MySQL
@@ -23,6 +25,14 @@ const { Sequelize, DataTypes } = require('sequelize'); // Import Sequelize and D
 
 RAR.Router = express.Router();
 RAR.App = express();
+const server = http.createServer(RAR.App);
+const io = new Server(server, {
+	cors: {
+		origin: "*",
+		methods: ["GET", "POST"]
+	}
+});
+RAR.IO = io;
 RAR.FS = fs;
 
 RAR.Mailer = nodemailer;
@@ -114,7 +124,6 @@ RAR.App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 RAR.App.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 RAR.App.use(bodyParser.json({ limit: '150mb' }));
-RAR.App.use(fileupload());
 RAR.App.use(express.static('./build'));
 RAR.App.use(express.static('./public'));
 RAR.App.use(express.static('./Static'));
@@ -178,7 +187,14 @@ RAR.FS.readdirSync(path.join(__dirname, '../', './App/Routes')).filter(function 
 //     });
 // });
 
-RAR.App.listen(port, () => console.log(`Foundation app is listening on port ${port}`));
+io.on('connection', (socket) => {
+	console.log('a user connected');
+	socket.on('disconnect', () => {
+		console.log('user disconnected');
+	});
+});
+
+server.listen(port, () => console.log(`Foundation app is listening on port ${port}`));
 
 console.log("(---------------------------------------------------------------)");
 console.log(" |                    Foundation Server Started...               |");

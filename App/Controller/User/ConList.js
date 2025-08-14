@@ -10,6 +10,9 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const moment = require('moment');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+
 module.exports = {
 	submitForm: async function (req, res) {
 		try {
@@ -551,7 +554,64 @@ module.exports = {
 				result: null
 			});
 		}
+	},
+
+	importUsers: async function (req, res) {
+		try {
+			// console.log("Importing users from file:", req.file);
+			
+			if (!req.file) {
+				return res.status(400).send({
+					statusCode: 400,
+					message: 'No file uploaded.',
+					result: null
+				});
+			}
+
+			const result = await RAR.App.Services.User.SrvList.importUsers(req.file);
+
+			// Delete the temporary file
+			fs.unlink(req.file.path, (err) => {
+				if (err) {
+					console.error("Error deleting temporary file:", err);
+				}
+			});
+
+			if (result.statusCode === 200) {
+				res.send({ statusCode: 200, message: result.message, result: result.result });
+			} else {
+				res.send({ statusCode: 400, message: result.message, result: null });
+			}
+		} catch (error) {
+			console.error("Error While Importing Users", error);
+			
+			let errorMessage = 'Error while importing users.';
+			if (error.name === 'SequelizeValidationError') {
+				errorMessage = error.errors.map(e => e.message).join(', ');
+			}
+			
+			res.status(400).send({
+				statusCode: 400,
+				message: errorMessage,
+				result: null
+			});
+		}
+	},
+	getUserProfile: async function (req, res) {
+		try {
+			const result = await RAR.App.Services.User.SrvList.getUserProfile(req.user.id);
+			if (result.statusCode === 200) {
+				res.send({ statusCode: 200, message: result.message, result: result.result });
+			} else {
+				res.send({ statusCode: 400, message: result.message, result: null });
+			}
+		} catch (error) {
+			console.log("Error While Getting Profile", error);
+			res.status(400).send({
+				statusCode: 400,
+				message: 'Error while getting profile.',
+				result: null
+			});
+		}
 	}
-
-
 }

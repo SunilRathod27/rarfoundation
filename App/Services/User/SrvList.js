@@ -311,4 +311,161 @@ module.exports = {
 		return registrationId;
 	},
 
+	importUsers: async function (file) {
+		try {
+			const workbook = RAR.Xlsx.readFile(file.path, { cellDates: true });
+			const sheetName = workbook.SheetNames[0];
+			const sheet = workbook.Sheets[sheetName];
+			const data = RAR.Xlsx.utils.sheet_to_json(sheet, { raw: false });
+
+			const results = [];
+			let successCount = 0;
+			let errorCount = 0;
+
+			for (const row of data) {
+				const trimmedRow = {};
+				for (const key in row) {
+					trimmedRow[key.trim()] = row[key];
+				}
+
+				const activationId = trimmedRow['Activation Id'];
+				const email = trimmedRow['Email'];
+				const whatsapp = trimmedRow['Whatsapp No.'];
+				const errors = [];
+
+				const requiredFields = ['Name', 'Father Name', 'Email', 'Birthday', 'Designation'];
+				const missingFields = requiredFields.filter(field => !trimmedRow[field]);
+
+				if (missingFields.length > 0) {
+					errors.push(`Missing required fields: ${missingFields.join(', ')}.`);
+				}
+
+				const orConditions = [];
+				if (email) {
+					orConditions.push({ email: email });
+				}
+				if (whatsapp) {
+					orConditions.push({ whatsapp: whatsapp });
+				}
+				if (activationId) {
+					orConditions.push({ activationId: activationId });
+				}
+
+				if (orConditions.length > 0) {
+					const existingUser = await RAR.User.findOne({
+						where: {
+							[Op.or]: orConditions
+						}
+					});
+
+					if (existingUser) {
+						if (existingUser.email === email) {
+							errors.push(`Email ${email} already exists.`);
+						}
+						if (existingUser.whatsapp === whatsapp) {
+							errors.push(`Whatsapp number ${whatsapp} already exists.`);
+						}
+						if (existingUser.activationId === activationId) {
+							errors.push(`Activation ID ${activationId} already exists.`);
+						}
+					}
+				}
+
+				if (errors.length > 0) {
+					errorCount++;
+					const reason = [...new Set(errors)].join(', ');
+					results.push({ ...trimmedRow, status: 'Error', reason });
+					RAR.IO.emit('user-processed', { name: trimmedRow['Name'] || 'Unknown', email: trimmedRow['Email'], status: 'Error', reason: reason });
+				} else {
+					try {
+						successCount++;
+						let registrationId = null;
+						if (!activationId) {
+							registrationId = await this.generateUniqueRegistrationId();
+						}
+
+						const newUser = {
+							activationId: activationId || null,
+							surname: trimmedRow['Surname'],
+							name: trimmedRow['Name'],
+							fathername: trimmedRow['Father Name'],
+							districtId: trimmedRow['District'],
+							whatsapp: whatsapp,
+							bloodGroupId: trimmedRow['Blood Group'],
+							email: email,
+							designation: trimmedRow['Designation'],
+							stateId: trimmedRow['State'],
+							address: trimmedRow['Address'],
+							birthday: trimmedRow['Birthday'],
+							photo: (trimmedRow['Photo'] || 'NA').substring(0, 255),
+							idProof: (trimmedRow['ID Proof'] || 'NA').substring(0, 255),
+							status: activationId ? 'active' : 'inactive',
+							registrationId: registrationId
+						};
+						await RAR.User.create(newUser);
+						results.push({ ...trimmedRow, status: 'Success', reason: '' });
+						RAR.IO.emit('user-processed', { name: trimmedRow['Name'], email: trimmedRow['Email'], status: 'Success', reason: '' });
+					} catch (error) {
+						errorCount++;
+						successCount--; // Decrement success count because it was pre-incremented
+						const reason = error.errors ? error.errors.map(e => e.message).join(', ') : 'An unexpected error occurred.';
+						results.push({ ...trimmedRow, status: 'Error', reason });
+						RAR.IO.emit('user-processed', { name: trimmedRow['Name'] || 'Unknown', email: trimmedRow['Email'], status: 'Error', reason: reason });
+					}
+				}
+			}
+
+			const fileName = `import_results_${Date.now()}.xlsx`;
+			const ws = RAR.Xlsx.utils.json_to_sheet(results);
+			const wb = RAR.Xlsx.utils.book_new();
+			RAR.Xlsx.utils.book_append_sheet(wb, ws, "Import Results");
+			RAR.Xlsx.writeFile(wb, `./public/uploads/${fileName}`);
+
+			RAR.IO.emit('import-finished', {
+				successCount,
+				errorCount,
+				fileName
+			});
+
+			return {
+				statusCode: 200,
+				message: 'Users imported successfully.',
+				result: {
+					successCount,
+					errorCount,
+					fileName
+				}
+			};
+		} catch (error) {
+			console.log("Error In Import Users: " + error);
+			RAR.IO.emit('import-error', { message: 'An unexpected error occurred during import.' });
+			return {
+				statusCode: 500,
+				message: 'Error while importing users.',
+				result: null
+			};
+		}
+	},
+	getUserProfile: async function (userId) {
+		try {
+			const user = await RAR.Admin.findByPk(userId, {
+				attributes: ['username', 'email']
+			});
+			if (!user) {
+				return { statusCode: 404, message: 'User not found.', result: null };
+			}
+			return {
+				statusCode: 200,
+				message: 'User profile fetched successfully.',
+				result: user
+			};
+		} catch (error) {
+			console.error("Error in fetching user profile: " + error.message);
+			return {
+				statusCode: 500,
+				message: 'Error in fetching user profile. Please try again.',
+				result: null
+			};
+		}
+	}
 }
