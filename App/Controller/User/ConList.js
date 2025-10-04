@@ -442,39 +442,88 @@ module.exports = {
 	updateDocuments: async function (req, res) {
 		try {
 
+			// const saveImage = async (base64String, targetSizeKB, fileName) => {
+			// 	try {
+			// 		const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+			// 		const imageBuffer = Buffer.from(base64Data, 'base64');
+			// 		const filePath = path.join(__dirname, '../../../public/uploads', fileName);
+
+			// 		let image = sharp(imageBuffer);
+
+			// 		// Resize image initially
+			// 		let resizedImageBuffer = await image
+			// 			.resize({ width: 1024 }) // Adjust initial width as needed
+			// 			.jpeg({ quality: 85 })  // Set initial quality
+			// 			.toBuffer();
+
+			// 		let fileSizeKB = resizedImageBuffer.length / 1024;
+
+			// 		// Adjust quality if needed
+			// 		while (fileSizeKB > targetSizeKB) {
+			// 			resizedImageBuffer = await sharp(resizedImageBuffer)
+			// 				.jpeg({ quality: Math.max(50, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2)) }) // Refine quality
+			// 				.toBuffer();
+
+			// 			fileSizeKB = resizedImageBuffer.length / 1024;
+			// 		}
+
+			// 		fs.writeFileSync(filePath, resizedImageBuffer);
+			// 		return fileName;
+			// 	} catch (error) {
+			// 		console.error('Error saving Document:', error);
+			// 		throw error;
+			// 	}
+			// };
 			const saveImage = async (base64String, targetSizeKB, fileName) => {
-				try {
-					const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
-					const imageBuffer = Buffer.from(base64Data, 'base64');
-					const filePath = path.join(__dirname, '../../../public/uploads', fileName);
+  try {
+    if (!base64String || typeof base64String !== 'string') {
+      throw new Error('Invalid image data');
+    }
 
-					let image = sharp(imageBuffer);
+    // ✅ Ensure valid image base64 prefix
+    if (!/^data:image\/(png|jpe?g|webp);base64,/.test(base64String)) {
+      throw new Error('Unsupported image format');
+    }
 
-					// Resize image initially
-					let resizedImageBuffer = await image
-						.resize({ width: 1024 }) // Adjust initial width as needed
-						.jpeg({ quality: 85 })  // Set initial quality
-						.toBuffer();
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+    const imageBuffer = Buffer.from(base64Data, 'base64');
+    const filePath = path.join(__dirname, '../../../public/uploads', fileName);
 
-					let fileSizeKB = resizedImageBuffer.length / 1024;
+    console.log(`Starting image processing for ${fileName}...`);
+    let image = sharp(imageBuffer);
 
-					// Adjust quality if needed
-					while (fileSizeKB > targetSizeKB) {
-						resizedImageBuffer = await sharp(resizedImageBuffer)
-							.jpeg({ quality: Math.max(50, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2)) }) // Refine quality
-							.toBuffer();
+    // ✅ Initial resize
+    let resizedImageBuffer = await image
+      .resize({ width: 1024 })
+      .jpeg({ quality: 85 })
+      .toBuffer();
 
-						fileSizeKB = resizedImageBuffer.length / 1024;
-					}
+    let fileSizeKB = resizedImageBuffer.length / 1024;
+    console.log(`Initial file size: ${fileSizeKB.toFixed(2)} KB`);
 
-					fs.writeFileSync(filePath, resizedImageBuffer);
-					return fileName;
-				} catch (error) {
-					console.error('Error saving Document:', error);
-					throw error;
-				}
-			};
+    // ✅ Limit loop to max 5 tries
+    let tries = 0;
+    while (fileSizeKB > targetSizeKB && tries < 5) {
+      const qualityValue = Math.max(40, Math.min(85, 100 - (fileSizeKB - targetSizeKB) * 2));
+      const safeQuality = Math.round(qualityValue); // 🔹 Fix: make sure it's an integer
+      resizedImageBuffer = await sharp(resizedImageBuffer)
+        .jpeg({ quality: safeQuality })
+        .toBuffer();
 
+      fileSizeKB = resizedImageBuffer.length / 1024;
+      tries++;
+    }
+
+    // ✅ Async file write
+    await fs.promises.writeFile(filePath, resizedImageBuffer);
+    console.log(`✅ Image saved: ${fileName} (${fileSizeKB.toFixed(2)} KB)`);
+    return fileName;
+  } catch (error) {
+    console.error(`Error saving Document [${fileName}]:`, error.message);
+    throw error;
+  }
+};
+	
 			// Check if an image is provided in the request
 			let previewPhotoUrl;
 			const updateData = { ...req.body };
